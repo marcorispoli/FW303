@@ -5,7 +5,7 @@
 *.err
 *.lst
 firmware/doc/html/**
-firmware/FW304.X/build/**
-firmware/FW304.X/debug/**
-firmware/FW304.X/dist/**
-firmware/FW304.X/.generated_files/**
+firmware/FW303.X/build/**
+firmware/FW303.X/debug/**
+firmware/FW303.X/dist/**
+firmware/FW303.X/.generated_files/**
