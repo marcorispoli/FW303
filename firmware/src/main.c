@@ -6,6 +6,8 @@
 
 #include "application.h"
 #include "Protocol/protocol.h"
+#include "Motors/motlib.h"
+
 
  /** 
      * \defgroup appMainModule  Main Module 
@@ -38,6 +40,8 @@ static void rtcEventHandler (RTC_TIMER32_INT_MASK intCause, uintptr_t context)
     
 }
 
+
+
 int main ( void )
 {
     /* Initialize all modules */
@@ -57,6 +61,8 @@ int main ( void )
     // ADC0_ConversionResultGet()
     // ADC1_ConversionResultGet()
     
+    motorsInitialize();     
+    
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
@@ -68,7 +74,9 @@ int main ( void )
         if(trigger_time & _1024_ms_TriggerTime){
             trigger_time &=~ _1024_ms_TriggerTime;            
             
-            VITALITY_LED_Toggle();                      
+            VITALITY_LED_Toggle(); 
+            
+            
         }        
  
         // Timer events activated into the RTC interrupt

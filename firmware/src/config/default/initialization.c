@@ -137,6 +137,8 @@ void SYS_Initialize ( void* data )
 
     RTC_Initialize();
 
+    TC0_TimerInitialize();
+
 
 
 
