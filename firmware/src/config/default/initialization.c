@@ -135,6 +135,8 @@ void SYS_Initialize ( void* data )
 
     CAN0_Initialize();
 
+    TC0_TimerInitialize();
+
     RTC_Initialize();
 
 
