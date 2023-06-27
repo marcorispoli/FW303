@@ -61,7 +61,8 @@ int main ( void )
     // ADC0_ConversionResultGet()
     // ADC1_ConversionResultGet()
     
-    motorsInitialize();     
+    motorsInitialize();   
+    
     
     while ( true )
     {
@@ -74,7 +75,9 @@ int main ( void )
         if(trigger_time & _1024_ms_TriggerTime){
             trigger_time &=~ _1024_ms_TriggerTime;            
             
-            VITALITY_LED_Toggle(); 
+            VITALITY_LED_Set();
+            TC0_TimerStart();
+            //VITALITY_LED_Toggle(); 
             
             
         }        

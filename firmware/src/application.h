@@ -23,10 +23,6 @@
  *
  * This Firmware implements the functions of the PCB/22-303 device  software specification.
  * 
- * # DEPENDENCIES
- * 
- * This application makes use of the following modules:
- * + MET_CAN_Protocol library module;
  * 
  * # CONFIGURATION SETTING
  * 
@@ -64,8 +60,24 @@
  *       - {name: "csp", version: "v3.9.1"}
  *       - {name: "dev_packs", version: "v3.9.0"}
  *
+ * ## PERIPHERAL CONFIGURATION
  * 
- * ### MCC SYSTEM configuration
+ * ### CLOCK GENERATOR CONFIGURATION
+ * 
+ * + DFLL: set to 48MHz Open Loop Mode;
+ * + GLK1: input = DFLL, output = 48MHz;
+ * + FDPLL0: input = GLK1, output = 120MHz;
+ * + GLK0: input = FDPLL0, output = 120MHz;
+ * + GLK2: input = DFLL, output = 8MHz;
+ * + GLK4: input = DFLL, output = 24MHz;
+ * 
+ * ### PERIPHERAL CLOCK CONFIGURATION
+ * 
+ * + CPU : input = GLK0, output = 120MHz;
+ * + CAN0: input = GLK4; output = 24MHz;
+ * + TCO,TC1 : input = GLK2, output = 8MHz;
+ * 
+ *  ### MCC SYSTEM configuration
  * 
  * ```text
  * Device & Project Configuration
@@ -85,7 +97,6 @@
  * 
  * ### MCC CAN0 configuration
  * 
- * ```text
  * 
  * + CAN Operational Mode = NORMAL;
  * + Interrupt Mode: Yes;
@@ -121,18 +132,16 @@
  * 
  *  + Timestamp Enable: YES 
  * 
- * ```
- * ### MCC Clock configuration
+ * ### TC0 CONFIGURATION
  * 
- * + GCLK4 to 24MHz;
- * + GCLK4 Assigned to the CAN0 module;
- * 
- * 
- * # Modules
- *
- * The Application implements the following modules:
- * - @ref applicationModule : defines the application modules and sub modules;
- * - @ref libraryModules : this is the set of the libraries used in the current application;
+ * + Counter mode: 16bit mode;
+ * + Select Prescaler: GLK_TC;
+ * + Operating mode: Timer;
+ * + Enable One-Shot mode: yes;
+ * + Timer Period Unit: microsecond;
+ * + Time: 1 
+ * + Enable Timer Period Interrupt: yes;
+ *  
  * 
  * # Licensing
  *
@@ -140,7 +149,7 @@
  * with the Microchip License Agreement conditions as described in:
  * - @ref licenseAgreement 
  *
- * # Documentation
+ * # Application documentation
  * 
  * This documentation has been produced with Doxygen 
  */
