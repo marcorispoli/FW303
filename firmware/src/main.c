@@ -7,7 +7,11 @@
 #include "application.h"
 #include "Protocol/protocol.h"
 #include "Motors/motlib.h"
-
+#include "Motors/mot_back.h"
+#include "Motors/mot_front.h"
+#include "Motors/mot_left.h"
+#include "Motors/mot_right.h"
+#include "Motors/mot_trap.h"
 
  /** 
      * \defgroup appMainModule  Main Module 
@@ -63,12 +67,17 @@ int main ( void )
     
     // Initializes the motors with the common routines
     motorsInitialize();   
-    
+    motorBackInit();
+    motorFrontInit();
+    motorLeftInit();
+    motorRightInit();
+    motorTrapInit();
     
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
+        
         
         // Protocol management
         ApplicationProtocolLoop();
@@ -84,13 +93,20 @@ int main ( void )
         // Timer events activated into the RTC interrupt
         if(trigger_time & _7820_us_TriggerTime){
             trigger_time &=~ _7820_us_TriggerTime;
-
+            
+            manageMotorLatch();
         }
 
         if(trigger_time & _15_64_ms_TriggerTime){
             trigger_time &=~ _15_64_ms_TriggerTime;      
  
-        
+            /*
+            motorBackTest();
+            motorFrontTest();
+            motorRightTest();
+            motorLeftTest();
+            */
+            motorTrapTest();
         }
     }
 

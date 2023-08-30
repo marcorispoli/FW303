@@ -119,6 +119,7 @@
         }_MOTOR_DATA_t;
      
         ext _MOTOR_DATA_t motor_latch[MOTOR_LEN]; //!< Array of the Motor Bus lines
+        ext bool motor_latch_request[MOTOR_LEN]; //!< Array of the Motor Bus line request
         
      /// @}   moduleStructures  
 
@@ -130,10 +131,17 @@
      * 
      *  @{
      */
+        
         ext void motorsInitialize(void); //!< Module initialization function
         ext void motorDisable(_MOTOR_ID_t motid);//!< Disables the motor
         ext void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, MOT_DIRECTION_t dir );//!< Activate the motor in a defined mode
         ext void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque); //!< Switch Off the motor with an active torque
+        ext void manageMotorLatch(void);
+        ext bool isLatched(_MOTOR_ID_t motid);
+        ext void stopTc(_MOTOR_ID_t motid);
+        ext void motorRegisterTcCallback(_MOTOR_ID_t motid, void (*fun_ptr)(TC_COMPARE_STATUS status, uintptr_t context) );
+        ext void setTcPeriod(_MOTOR_ID_t motid, uint16_t period);
+        ext void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp);
         
     /// @}   publicModuleApi 
 

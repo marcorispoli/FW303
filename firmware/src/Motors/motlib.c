@@ -61,6 +61,21 @@ void wait_us(unsigned short utime){
     return;
 }
 
+void manageMotorLatch(void){
+    for(int i=0; i <= MOTOR_M5; i++){
+        if(!motor_latch_request[i]) continue;
+        setLatch(i);
+        motor_latch_request[i] = false;
+    }
+}
+
+void requestLatch(_MOTOR_ID_t motid){
+    motor_latch_request[motid] = true;
+}
+
+bool isLatched(_MOTOR_ID_t motid){
+    return !motor_latch_request[motid];
+}
 
 /**
  * This function Latches the Motor Bus data to the Motor driver.
@@ -75,7 +90,6 @@ void wait_us(unsigned short utime){
  */
 void setLatch(_MOTOR_ID_t motid){
         
-    
     // Set the BUS value before to latch the data to the target motor 
     unsigned char bus = *((unsigned char*) &motor_latch[motid]);
     if(bus & 0x1 ) uc_IA_Set();
@@ -154,8 +168,7 @@ void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, M
     motor_latch[motid].RST =    MOT_RST_OFF;
     motor_latch[motid].ENASTEP = MOT_ENASTEP_ON;
             
-    // Latches 
-    setLatch(motid);
+    requestLatch(motid);
  
 }
 
@@ -190,7 +203,7 @@ void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque){
     motor_latch[motid].ENASTEP = MOT_ENASTEP_OFF;
             
     // Latches 
-    setLatch(motid);
+    requestLatch(motid);
     
 }
 
@@ -213,7 +226,7 @@ void motorDisable(_MOTOR_ID_t motid){
     motor_latch[motid].ENASTEP = MOT_ENASTEP_OFF;
             
     // Latches 
-    setLatch(motid);
+    requestLatch(motid);
 }
 
 /**
@@ -243,15 +256,10 @@ void motorsInitialize(void){
     uc_LATCH_M4_Clear();
     uc_LATCH_M5_Clear();
     
-    // Reset Steps
-    uc_STEP_M1_Clear();
-    uc_STEP_M2_Clear();
-    uc_STEP_M3_Clear();
-    uc_STEP_M4_Clear();
-    uc_STEP_M5_Clear();
     
     // INitializes the Motor BUS lines
-    for(int i=0; i< MOTOR_LEN; i++){ 
+    for(int i=0; i< MOTOR_LEN; i++){         
+        motor_latch_request[i] = false;
         motor_latch[i].ILIM =   MOT_TORQUE_DISABLE;
         motor_latch[i].uSTEP =  MOT_uSTEP_1;
         motor_latch[i].DIR =    MOT_DIRCW;
@@ -261,9 +269,135 @@ void motorsInitialize(void){
         setLatch(i);
     }
     
-
+    
 }
 
+void setTcPeriod(_MOTOR_ID_t motid, uint16_t period){
+    switch(motid){
+        case MOTOR_M1: 
+            
+            TC1_CompareStop();    
+            TC1_Compare16bitPeriodSet(period);
+            TC1_CompareStart();
+            
+        break;
+        case MOTOR_M2: 
+            TC2_CompareStop();    
+            TC2_Compare16bitPeriodSet(period);
+            TC2_CompareStart();
+            
+        break;
+        case MOTOR_M3: 
+            TC3_CompareStop();    
+            TC3_Compare16bitPeriodSet(period);
+            TC3_CompareStart();
+            
+        break;
+        case MOTOR_M4: 
+            TC4_CompareStop();    
+            TC4_Compare16bitPeriodSet(period);
+            TC4_CompareStart();
+            
+        break;
+        case MOTOR_M5: 
+            TC5_CompareStop();    
+            TC5_Compare16bitPeriodSet(period);
+            TC5_CompareStart();
+            
+        break;
+    }
+}
 
+void motorRegisterTcCallback(_MOTOR_ID_t motid, void (*fun_ptr)(TC_COMPARE_STATUS status, uintptr_t context) ){
+    switch(motid){
+        case MOTOR_M1: 
+            TC1_CompareCallbackRegister(fun_ptr, 0);
+        break;
+        case MOTOR_M2: 
+            TC2_CompareCallbackRegister(fun_ptr, 0);
+        break;
+        case MOTOR_M3: 
+           TC3_CompareCallbackRegister(fun_ptr, 0);
+        break;
+        case MOTOR_M4: 
+            TC4_CompareCallbackRegister(fun_ptr, 0);
 
+        break;
+        case MOTOR_M5: 
+            TC5_CompareCallbackRegister(fun_ptr, 0);
+        break;
+    }
+}
 
+void stopTc(_MOTOR_ID_t motid){
+    switch(motid){
+        case MOTOR_M1: 
+            TC1_CompareStop();
+        break;
+        case MOTOR_M2: 
+            TC2_CompareStop();
+        break;
+        case MOTOR_M3: 
+           TC3_CompareStop();
+        break;
+        case MOTOR_M4: 
+            TC4_CompareStop();
+
+        break;
+        case MOTOR_M5: 
+            TC5_CompareStop();
+        break;
+    }
+}
+
+void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
+    uint16_t current_period;
+    
+    switch(motid){
+        case MOTOR_M1: 
+            current_period = TC1_Compare16bitPeriodGet();
+            if(current_period > final){
+                TC1_CompareStop();    
+                TC1_Compare16bitPeriodSet(current_period - ramp);
+                TC1_CompareStart();
+            }
+        break;
+        case MOTOR_M2: 
+            current_period = TC2_Compare16bitPeriodGet();
+            if(current_period > final){
+                TC2_CompareStop();    
+                TC2_Compare16bitPeriodSet(current_period - ramp);
+                TC2_CompareStart();
+            }
+            
+        break;
+        case MOTOR_M3: 
+            current_period = TC3_Compare16bitPeriodGet();
+            if(current_period > final){
+                TC3_CompareStop();    
+                TC3_Compare16bitPeriodSet(current_period - ramp);
+                TC3_CompareStart();
+            }
+
+            
+        break;
+        case MOTOR_M4: 
+            current_period = TC4_Compare16bitPeriodGet();
+            if(current_period > final){
+                TC4_CompareStop();    
+                TC4_Compare16bitPeriodSet(current_period - ramp);
+                TC4_CompareStart();
+            }
+
+        break;
+        case MOTOR_M5: 
+            current_period = TC5_Compare16bitPeriodGet();
+            if(current_period > final){
+                TC5_CompareStop();    
+                TC5_Compare16bitPeriodSet(current_period - ramp);
+                TC5_CompareStart();
+            }
+
+        break;
+    }
+}

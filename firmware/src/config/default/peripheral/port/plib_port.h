@@ -325,23 +325,23 @@
 #define OPTO_F_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 1U)) & 0x01U)
 #define OPTO_F_PIN                  PORT_PIN_PB01
 
-/*** Macros for OPTO_LAT_R pin ***/
-#define OPTO_LAT_R_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 2U))
-#define OPTO_LAT_R_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 2U))
-#define OPTO_LAT_R_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 2U))
-#define OPTO_LAT_R_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 2U))
-#define OPTO_LAT_R_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 2U))
-#define OPTO_LAT_R_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 2U)) & 0x01U)
-#define OPTO_LAT_R_PIN                  PORT_PIN_PB02
+/*** Macros for OPTO_R pin ***/
+#define OPTO_R_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 2U))
+#define OPTO_R_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 2U))
+#define OPTO_R_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 2U))
+#define OPTO_R_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 2U))
+#define OPTO_R_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 2U))
+#define OPTO_R_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 2U)) & 0x01U)
+#define OPTO_R_PIN                  PORT_PIN_PB02
 
-/*** Macros for OPTO_LAT_L pin ***/
-#define OPTO_LAT_L_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 3U))
-#define OPTO_LAT_L_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 3U))
-#define OPTO_LAT_L_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 3U))
-#define OPTO_LAT_L_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 3U))
-#define OPTO_LAT_L_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 3U))
-#define OPTO_LAT_L_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 3U)) & 0x01U)
-#define OPTO_LAT_L_PIN                  PORT_PIN_PB03
+/*** Macros for OPTO_L pin ***/
+#define OPTO_L_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 3U))
+#define OPTO_L_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 3U))
+#define OPTO_L_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 3U))
+#define OPTO_L_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 3U))
+#define OPTO_L_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 3U))
+#define OPTO_L_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 3U)) & 0x01U)
+#define OPTO_L_PIN                  PORT_PIN_PB03
 
 // *****************************************************************************
 /* PORT Group
