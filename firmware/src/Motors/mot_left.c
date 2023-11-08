@@ -6,11 +6,11 @@
 
 
 static void motorLeftCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Callback every STEP pin changes
-static volatile LEFT_MOTOR_t leftMotor; //!< Motor main structure variable declaration
 
-#define um_step_dimension   ((uint32_t) 13)   //!< (micro-meter) linear space per pulse  
-#define umToSteps(val) (((uint32_t) val) / ( (uint32_t) um_step_dimension)) //!< Macro conversion from um to pulse
-#define stepsToum(val) (((uint32_t) val) * ( (uint32_t) um_step_dimension)) //!< Macro conversion from step to um
+// Every full step is 0.1 mm translation
+#define uSTEP 16
+#define umToSteps(val) ( ((uint32_t) val * (uint32_t) uSTEP) / ((uint32_t) 100) ) //!< Macro conversion from um to u-pulse
+#define stepsToum(val) ( ((uint32_t) val * (uint32_t) 100) / ((uint32_t) uSTEP) ) //!< Macro conversion from step to um
 
 #define MOTOR_ID MOTOR_M3
 #define MOTOR_STEP_SET uc_STEP_M3_Set()
@@ -43,23 +43,16 @@ void motorLeftInit(void){
 
 }
 
-void motorLeftTest(void){
-    static bool button_stat = false;
-    
-    if(button_stat != uc_TEST_PUSH_Get()){
-        button_stat = uc_TEST_PUSH_Get();
-        if(button_stat) activateLeftCollimation();        
-    }        
-}
 
-void activateLeftCollimation(void){
-    if(MOTOR_DATA.command_activated) return;    
+bool activateLeftCollimation(unsigned short target){
+    if(MOTOR_DATA.command_activated) return false;    
     MOTOR_DATA.command_activated = true;
     MOTOR_DATA.command_sequence = 0;
-    MOTOR_DATA.target_position = 2000;
-    setTcPeriod(MOTOR_ID, 1000);
-    
+    MOTOR_DATA.target_position = umToSteps(target);
+    setTcPeriod(MOTOR_ID, 1000);    
+    return true;
 }
+
 
 void motorLeftCallback(TC_COMPARE_STATUS status, uintptr_t context){
    static uint32_t stp=0;

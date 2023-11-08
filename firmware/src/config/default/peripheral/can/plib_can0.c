@@ -78,7 +78,7 @@ static const can_sidfe_registers_t can0StdFilter[] =
         .CAN_SIDFE_0 = CAN_SIDFE_0_SFT(0UL) |
                   CAN_SIDFE_0_SFID1(0x112UL) |
                   CAN_SIDFE_0_SFID2(0x112UL) |
-                  CAN_SIDFE_0_SFEC(2UL)
+                  CAN_SIDFE_0_SFEC(1UL)
     },
 };
 
@@ -126,7 +126,7 @@ void CAN0_Initialize(void)
     CAN0_REGS->CAN_CCCR |= CAN_CCCR_CCE_Msk;
 
     /* Set Nominal Bit timing and Prescaler Register */
-    CAN0_REGS->CAN_NBTP  = CAN_NBTP_NTSEG2(5UL) | CAN_NBTP_NTSEG1(16UL) | CAN_NBTP_NBRP(0UL) | CAN_NBTP_NSJW(5UL);
+    CAN0_REGS->CAN_NBTP  = CAN_NBTP_NTSEG2(0UL) | CAN_NBTP_NTSEG1(5UL) | CAN_NBTP_NBRP(2UL) | CAN_NBTP_NSJW(0UL);
 
 
     /* Global Filter Configuration Register */
@@ -290,16 +290,6 @@ bool CAN0_MessageReceive(uint32_t *id, uint8_t *length, uint8_t *data, uint16_t 
             can0RxMsg[msgAttr][bufferIndex].timestamp = timestamp;
             can0RxMsg[msgAttr][bufferIndex].msgFrameAttr = msgFrameAttr;
             CAN0_REGS->CAN_IE |= CAN_IE_RF0NE_Msk;
-            status = true;
-            break;
-        case CAN_MSG_ATTR_RX_FIFO1:
-            bufferIndex = (uint8_t)((CAN0_REGS->CAN_RXF1S & CAN_RXF1S_F1GI_Msk) >> CAN_RXF1S_F1GI_Pos);
-            can0RxMsg[msgAttr][bufferIndex].rxId = id;
-            can0RxMsg[msgAttr][bufferIndex].rxBuffer = data;
-            can0RxMsg[msgAttr][bufferIndex].rxsize = length;
-            can0RxMsg[msgAttr][bufferIndex].timestamp = timestamp;
-            can0RxMsg[msgAttr][bufferIndex].msgFrameAttr = msgFrameAttr;
-            CAN0_REGS->CAN_IE |= CAN_IE_RF1NE_Msk;
             status = true;
             break;
         default:
@@ -535,12 +525,6 @@ void CAN0_MessageRAMConfigSet(uint8_t *msgRAMConfigBaseAddress)
     CAN0_REGS->CAN_RXF0C = CAN_RXF0C_F0S(1UL) | CAN_RXF0C_F0WM(0UL) | CAN_RXF0C_F0OM_Msk |
             CAN_RXF0C_F0SA((uint32_t)can0Obj.msgRAMConfig.rxFIFO0Address);
 
-    can0Obj.msgRAMConfig.rxFIFO1Address = (can_rxf1e_registers_t *)(msgRAMConfigBaseAddress + offset);
-    offset += CAN0_RX_FIFO1_SIZE;
-    /* Receive FIFO 1 Configuration Register */
-    CAN0_REGS->CAN_RXF1C = CAN_RXF1C_F1S(1UL) | CAN_RXF1C_F1WM(0UL) | CAN_RXF1C_F1OM_Msk |
-            CAN_RXF1C_F1SA((uint32_t)can0Obj.msgRAMConfig.rxFIFO1Address);
-
     can0Obj.msgRAMConfig.txBuffersAddress = (can_txbe_registers_t *)(msgRAMConfigBaseAddress + offset);
     offset += CAN0_TX_FIFO_BUFFER_SIZE;
     /* Transmit Buffer/FIFO Configuration Register */
@@ -758,7 +742,6 @@ void CAN0_InterruptHandler(void)
     uint8_t bufferIndex = 0U;
     bool testCondition = false;
     can_rxf0e_registers_t *rxf0eFifo = NULL;
-    can_rxf1e_registers_t *rxf1eFifo = NULL;
     uint32_t ir = CAN0_REGS->CAN_IR;
 
     /* Check if error occurred */
@@ -819,62 +802,6 @@ void CAN0_InterruptHandler(void)
             if (can0CallbackObj[CAN_MSG_ATTR_RX_FIFO0].callback != NULL)
             {
                 can0CallbackObj[CAN_MSG_ATTR_RX_FIFO0].callback(can0CallbackObj[CAN_MSG_ATTR_RX_FIFO0].context);
-            }
-        }
-    }
-    /* New Message in Rx FIFO 1 */
-    if ((ir & CAN_IR_RF1N_Msk) != 0U)
-    {
-        CAN0_REGS->CAN_IR = CAN_IR_RF1N_Msk;
-        CAN0_REGS->CAN_IE &= (~CAN_IE_RF1NE_Msk);
-
-        if ((CAN0_REGS->CAN_RXF1S & CAN_RXF1S_F1FL_Msk) != 0U)
-        {
-            /* Read data from the Rx FIFO1 */
-            rxgi = (uint8_t)((CAN0_REGS->CAN_RXF1S & CAN_RXF1S_F1GI_Msk) >> CAN_RXF1S_F1GI_Pos);
-            rxf1eFifo = (can_rxf1e_registers_t *) ((uint8_t *)can0Obj.msgRAMConfig.rxFIFO1Address + ((uint32_t)rxgi * CAN0_RX_FIFO1_ELEMENT_SIZE));
-
-            /* Get received identifier */
-            if ((rxf1eFifo->CAN_RXF1E_0 & CAN_RXF1E_0_XTD_Msk) != 0U)
-            {
-                *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].rxId = rxf1eFifo->CAN_RXF1E_0 & CAN_RXF1E_0_ID_Msk;
-            }
-            else
-            {
-                *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].rxId = (rxf1eFifo->CAN_RXF1E_0 >> 18) & CAN_STD_ID_Msk;
-            }
-
-            /* Check RTR and FDF bits for Remote/Data Frame */
-            testCondition = ((rxf1eFifo->CAN_RXF1E_0 & CAN_RXF1E_0_RTR_Msk) != 0U);
-            testCondition = ((rxf1eFifo->CAN_RXF1E_1 & CAN_RXF1E_1_FDF_Msk) == 0U) && testCondition;
-            if (testCondition)
-            {
-                *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].msgFrameAttr = CAN_MSG_RX_REMOTE_FRAME;
-            }
-            else
-            {
-                *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].msgFrameAttr = CAN_MSG_RX_DATA_FRAME;
-            }
-
-            /* Get received data length */
-            length = CANDlcToLengthGet((uint8_t)((rxf1eFifo->CAN_RXF1E_1 & CAN_RXF1E_1_DLC_Msk) >> CAN_RXF1E_1_DLC_Pos));
-
-            /* Copy data to user buffer */
-            memcpy(can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].rxBuffer, (uint8_t *)&rxf1eFifo->CAN_RXF1E_DATA, length);
-            *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].rxsize = length;
-
-            /* Get timestamp from received message */
-            if (can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].timestamp != NULL)
-            {
-                *can0RxMsg[CAN_MSG_ATTR_RX_FIFO1][rxgi].timestamp = (uint16_t)(rxf1eFifo->CAN_RXF1E_1 & CAN_RXF1E_1_RXTS_Msk);
-            }
-
-            /* Ack the fifo position */
-            CAN0_REGS->CAN_RXF1A = CAN_RXF1A_F1AI((uint32_t)rxgi);
-
-            if (can0CallbackObj[CAN_MSG_ATTR_RX_FIFO1].callback != NULL)
-            {
-                can0CallbackObj[CAN_MSG_ATTR_RX_FIFO1].callback(can0CallbackObj[CAN_MSG_ATTR_RX_FIFO1].context);
             }
         }
     }

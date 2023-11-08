@@ -55,30 +55,27 @@ int main ( void )
     RTC_Timer32CallbackRegister(rtcEventHandler, 0);
     RTC_Timer32Start(); // Start the RTC module
     
+    // Application Protocol initialization
+    ApplicationProtocolInit();
+    
     // ADC Initialization
     //ADC0_Enable();
     //ADC0_ConversionStart();
     //ADC1_Enable();    
-    //ADC1_ConversionStart();
-    
+    //ADC1_ConversionStart();    
     // ADC conversion functions
     // ADC0_ConversionResultGet()
     // ADC1_ConversionResultGet()
     
     // Initializes the motors with the common routines
     motorsInitialize();   
-    motorBackInit();
-    motorFrontInit();
-    motorLeftInit();
-    motorRightInit();
-    motorTrapInit();
+   
     
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
-        
-        
+                
         // Protocol management
         ApplicationProtocolLoop();
                
@@ -86,27 +83,18 @@ int main ( void )
             trigger_time &=~ _1024_ms_TriggerTime;            
             
             VITALITY_LED_Toggle(); 
-            
-            
+                        
         }        
  
         // Timer events activated into the RTC interrupt
         if(trigger_time & _7820_us_TriggerTime){
             trigger_time &=~ _7820_us_TriggerTime;
-            
             manageMotorLatch();
         }
 
         if(trigger_time & _15_64_ms_TriggerTime){
             trigger_time &=~ _15_64_ms_TriggerTime;      
  
-            /*
-            motorBackTest();
-            motorFrontTest();
-            motorRightTest();
-            motorLeftTest();
-            */
-            motorTrapTest();
         }
     }
 

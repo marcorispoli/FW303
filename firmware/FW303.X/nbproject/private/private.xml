@@ -3,19 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/config/default/peripheral/tc/plib_tc5.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_left.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Protocol/protocol.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_left.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Shared/CAN/MET_can_protocol.c</file>
             <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/motlib.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_back.h</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_trap.h</file>
             <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/main.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_back.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_trap.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/motlib.h</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_front.c</file>
-            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mot_front.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Protocol/protocol.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Shared/CAN/MET_can_protocol.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Protocol/protocol.h</file>
         </group>
     </open-files>
 </project-private>

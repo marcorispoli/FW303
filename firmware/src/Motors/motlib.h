@@ -118,6 +118,31 @@
             unsigned char ENASTEP:1;//!< Motor Enable Step output
         }_MOTOR_DATA_t;
      
+        /// Module data structure
+        typedef struct{
+
+            // Filter positioning data
+            bool    command_activated;  //!< A command is in execution
+            bool    position_valid;      //!< The current position is valid
+            uint32_t target_position;   //!< Define the calibrated position 
+
+            // Slot detection        
+            bool     opto_status; //!< This is a copy of the current Opto status
+            uint32_t current_pulses;//!< This is the current pulse count during transitions
+
+            // Speed regulation
+            uint16_t init_period;   //!< This is the initial period for the PWM
+            uint16_t final_period;  //!< This is the final period for the PWM
+            uint16_t ramp_rate;     //!< This is the ramp value (delta period for every period) PWM
+
+            uint8_t command_sequence;//!< This is the execution sequence index
+            bool     running;        //!< This is the motor activated flag            
+
+            uint32_t  measured_light_slot; //!< Measures the light slot pulses for diagnosys and test
+            uint32_t  measured_dark_slot; //!< Measures the dark slot pulses for diagnosys and test
+
+        }MOTOR_STRUCT_t;
+        
         ext _MOTOR_DATA_t motor_latch[MOTOR_LEN]; //!< Array of the Motor Bus lines
         ext bool motor_latch_request[MOTOR_LEN]; //!< Array of the Motor Bus line request
         
@@ -143,7 +168,16 @@
         ext void setTcPeriod(_MOTOR_ID_t motid, uint16_t period);
         ext void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp);
         
-    /// @}   publicModuleApi 
+        ext bool selectFormat2D(unsigned short left, unsigned short right, unsigned short front, unsigned short back, unsigned short trap);
+        ext bool motorsIsRunning(void);
+        ext bool motorsIsError(void);
+        ext bool leftIsError(void);
+        ext bool rightIsError(void);
+        ext bool frontIsError(void);
+        ext bool backIsError(void);
+        ext bool trapIsError(void);
+
+        /// @}   publicModuleApi 
 
 
 

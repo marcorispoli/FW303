@@ -2,6 +2,11 @@
 
 #include "application.h"
 #include "motlib.h"
+#include "mot_back.h"
+#include "mot_front.h"
+#include "mot_left.h"
+#include "mot_right.h"
+#include "mot_trap.h"
 
  /**
      * \defgroup privateModuleMembers Private module members
@@ -20,7 +25,7 @@
         static void latch_1us_callback(TC_TIMER_STATUS status, uintptr_t context); //!< This is the 1us TC0 callback routine
         static void wait_us(unsigned short utime); //!< This is the delay routine based on the 1us TC0 interrupt
         static void setLatch(_MOTOR_ID_t motid); //!< This is the Latch Pulse routine
-        
+         
     /// @}   privateModuleMembers
 
 
@@ -269,7 +274,11 @@ void motorsInitialize(void){
         setLatch(i);
     }
     
-    
+    motorBackInit();
+    motorFrontInit();
+    motorLeftInit();
+    motorRightInit();
+    motorTrapInit();
 }
 
 void setTcPeriod(_MOTOR_ID_t motid, uint16_t period){
@@ -401,3 +410,53 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
         break;
     }
 }
+
+bool selectFormat2D(unsigned short left, unsigned short right, unsigned short front, unsigned short back, unsigned short trap){
+    
+    // Verify if a command is executing
+    if(leftMotor.command_activated) return false;
+    if(rightMotor.command_activated) return false;
+    if(frontMotor.command_activated) return false;
+    if(backMotor.command_activated) return false;
+    if(trapMotor.command_activated) return false;
+    
+ 
+    activateBackCollimation(back);
+    activateFrontCollimation(front);
+    activateLeftCollimation(left);
+    activateRightCollimation(right);
+    activateTrapCollimation(trap);
+        
+    return true;
+}
+
+bool motorsIsRunning(void){
+    return ( (leftMotor.command_activated) || (rightMotor.command_activated) ||(backMotor.command_activated) ||(frontMotor.command_activated)||(trapMotor.command_activated));
+}
+
+ext bool motorsIsError(void){
+    if(motorsIsRunning()) return false;
+    return ( (!leftMotor.position_valid) || (!rightMotor.position_valid) ||(!backMotor.position_valid) ||(!frontMotor.position_valid)||(!trapMotor.position_valid));
+}
+
+bool leftIsError(void){
+    return (!leftMotor.position_valid);
+}
+
+bool rightIsError(void){
+    return (!rightMotor.position_valid);
+}
+
+
+bool frontIsError(void){
+    return (!frontMotor.position_valid);
+}
+
+bool backIsError(void){
+    return (!backMotor.position_valid);
+}
+
+bool trapIsError(void){
+    return (!trapMotor.position_valid);
+}
+

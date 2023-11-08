@@ -75,7 +75,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="can0" name="AUTO_NOMINAL_BIT_TIMING_CALCULATION"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;AUTO_NOMINAL_BIT_TIMING_CALCULATION&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
 </value>
@@ -4265,7 +4267,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;CAN0_STD_FILTER2_CONFIG&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;2&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;1&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7215,7 +7217,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="can0" name="FILTERS_EXT_REJECT"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;FILTERS_EXT_REJECT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
 </value>
@@ -7266,7 +7270,14 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="can0" name="NBTP_NBRP"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NBTP_NBRP&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Boolean dnOrder=&quot;0&quot; id=&quot;readOnly&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
+      &lt;/Boolean&gt;
+    &lt;/Attributes&gt;
+    &lt;Values dnOrder=&quot;1&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;2&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
 </value>
@@ -7276,7 +7287,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NBTP_NSJW&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;6&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;1&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7287,7 +7298,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NBTP_NTSEG1&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;17&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;6&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7298,7 +7309,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NBTP_NTSEG2&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;6&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;1&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7318,7 +7329,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NBTP_TOTAL_TIME_QUANTA&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;24&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;8&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7339,7 +7350,14 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="can0" name="NOMINAL_SAMPLE_POINT"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NOMINAL_SAMPLE_POINT&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Boolean dnOrder=&quot;0&quot; id=&quot;readOnly&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;true&lt;/Value&gt;
+      &lt;/Boolean&gt;
+    &lt;/Attributes&gt;
+    &lt;Values dnOrder=&quot;1&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;87.5&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
 </value>
@@ -7349,7 +7367,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;NOMINAL_TIME_QUANTA_PERIOD&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;41.667&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;can0&quot; value=&quot;125.000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
@@ -7449,7 +7467,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="can0" name="RXF1_USE"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;can0&gt;
   &lt;can0 dnOrder=&quot;0&quot; id=&quot;RXF1_USE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/can0&gt;
 &lt;/can0&gt;
 </value>
@@ -7781,7 +7801,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;CONFIG_CLOCK_DPLL0_LDRFRAC_FRACTION&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;16&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;0&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -7793,7 +7813,7 @@
   &lt;core dnOrder=&quot;0&quot; id=&quot;CONFIG_CLOCK_DPLL0_LDR_INTEGER&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;119&quot;/&gt;
-      &lt;User dnOrder=&quot;1&quot; value=&quot;1&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;119&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -7804,7 +7824,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;CONFIG_CLOCK_DPLL0_MULTIPLIER_VALUE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;2.5&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;120.0&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -7974,7 +7994,7 @@
   &lt;core dnOrder=&quot;0&quot; id=&quot;GCLK_2_DIV&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;48&quot;/&gt;
-      &lt;User dnOrder=&quot;1&quot; value=&quot;6&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;48&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -7985,7 +8005,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;GCLK_2_DIVIDER_VALUE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;6&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;48&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -7996,7 +8016,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;GCLK_2_FREQ&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;8000000&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;1000000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -8107,7 +8127,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;GCLK_ID_1_FREQ&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;48000000&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;1000000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -8119,7 +8139,7 @@
   &lt;core dnOrder=&quot;0&quot; id=&quot;GCLK_ID_1_GENSEL&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;2&quot;/&gt;
-      &lt;User dnOrder=&quot;1&quot; value=&quot;1&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;2&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -18217,7 +18237,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\clock\plib_clock.c</file>
-         <hash>a75615ff3201192a5e8ff592e681745c8dc1d741cac7300e2ddbdf077f7f885a</hash>
+         <hash>878d87a0d8b0932c771a9e9b9d03726ed1c86517e2135c8b39775268a82b443e</hash>
       </entry>
       <entry>
          <file>..\src\packs\ATSAME51J20A_DFP\component\can.h</file>
@@ -18573,7 +18593,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\can\plib_can0.h</file>
-         <hash>504f4246fac161484c2a4c3bcbac184fa02cd7217e06178ecad37f5fa6d7cad2</hash>
+         <hash>cfe2bf6669a79d4867b4fc600d98c2257c05d3c61667265f54898f7b9805c26f</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\tc\plib_tc2.c</file>
@@ -18605,7 +18625,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\can\plib_can0.c</file>
-         <hash>290cdb901f4294fbe31301bcf8827170b70a0389a460224f16e1ca8063eb1b22</hash>
+         <hash>853fb5141dfecff0d3ba1d68d5689a18dbfde45f7268fea9b849cf1fef922d44</hash>
       </entry>
       <entry>
          <file>..\src\packs\ATSAME51J20A_DFP\instance\adc0.h</file>

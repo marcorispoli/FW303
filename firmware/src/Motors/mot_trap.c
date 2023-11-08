@@ -6,11 +6,11 @@
 
 
 static void motorTrapCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Callback every STEP pin changes
-static volatile TRAP_MOTOR_t trapMotor; //!< Motor main structure variable declaration
 
-#define um_step_dimension   ((uint32_t) 13)   //!< (micro-meter) linear space per pulse  
-#define umToSteps(val) (((uint32_t) val) / ( (uint32_t) um_step_dimension)) //!< Macro conversion from um to pulse
-#define stepsToum(val) (((uint32_t) val) * ( (uint32_t) um_step_dimension)) //!< Macro conversion from step to um
+// Every full step is 0.376°  rotation
+#define uSTEP 16
+#define mgToSteps(val) ( ((uint32_t) val * (uint32_t) uSTEP) / ((uint32_t) 376) ) //!< Macro conversion from mg (milli degree)to u-pulse
+#define stepsToMg(val) ( ((uint32_t) val * (uint32_t) 376) / ((uint32_t) uSTEP) ) //!< Macro conversion from u-step to mg (milli degree))
 
 #define MOTOR_ID MOTOR_M5
 #define MOTOR_STEP_SET uc_STEP_M5_Set()
@@ -34,7 +34,7 @@ void motorTrapInit(void){
     MOTOR_DATA.command_sequence = 0;
     MOTOR_DATA.running = false; 
     
-    MOTOR_DATA.target_position = umToSteps(100);
+    MOTOR_DATA.target_position = mgToSteps(100);
     motorDisable(MOTOR_ID);
     
     // Registers the working callback
@@ -43,23 +43,21 @@ void motorTrapInit(void){
 
 }
 
-void motorTrapTest(void){
-    static bool button_stat = false;
+bool activateTrapCollimation(unsigned short target){
+    // Debug
+    MOTOR_DATA.command_activated = false;
+    MOTOR_DATA.position_valid = true;
+    return true;
+    //////////////
     
-    if(button_stat != uc_TEST_PUSH_Get()){
-        button_stat = uc_TEST_PUSH_Get();
-        if(button_stat) activateTrapCollimation();        
-    }        
-}
-
-void activateTrapCollimation(void){
-    if(MOTOR_DATA.command_activated) return;    
+    if(MOTOR_DATA.command_activated) return false;    
     MOTOR_DATA.command_activated = true;
     MOTOR_DATA.command_sequence = 0;
-    MOTOR_DATA.target_position = 2000;
-    setTcPeriod(MOTOR_ID, 1000);
-    
+    MOTOR_DATA.target_position = mgToSteps(target);
+    setTcPeriod(MOTOR_ID, 1000);    
+    return true;
 }
+
 
 void motorTrapCallback(TC_COMPARE_STATUS status, uintptr_t context){
    static uint32_t stp=0;
