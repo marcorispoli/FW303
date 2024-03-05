@@ -130,7 +130,7 @@ void CAN0_Initialize(void)
 
 
     /* Global Filter Configuration Register */
-    CAN0_REGS->CAN_GFC = CAN_GFC_ANFS_REJECT | CAN_GFC_ANFE_REJECT | CAN_GFC_RRFS_Msk;
+    CAN0_REGS->CAN_GFC = CAN_GFC_ANFS_REJECT | CAN_GFC_ANFE_REJECT | CAN_GFC_RRFS_Msk | CAN_GFC_RRFE_Msk;
 
     /* Timestamp Counter Configuration Register */
     CAN0_REGS->CAN_TSCC = CAN_TSCC_TCP(0UL) | CAN_TSCC_TSS_INC;

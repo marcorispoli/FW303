@@ -18349,7 +18349,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\initialization.c</file>
-         <hash>56895095f3aefdc2b80ecaabdc2e78710cca4315567fb6951d90fe8bc3b9fd2e</hash>
+         <hash>db0e11428f63a9ade64f93ec6644569b55aa31fe51a7731dacdc2ab2c0ff7c62</hash>
       </entry>
       <entry>
          <file>..\src\packs\CMSIS\CMSIS\Core\Include\cmsis_compiler.h</file>
@@ -18625,7 +18625,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\can\plib_can0.c</file>
-         <hash>853fb5141dfecff0d3ba1d68d5689a18dbfde45f7268fea9b849cf1fef922d44</hash>
+         <hash>ceda02f5d7fe54c60bad93a0ef6683366e901794369e102aa93b8a522e50b44e</hash>
       </entry>
       <entry>
          <file>..\src\packs\ATSAME51J20A_DFP\instance\adc0.h</file>
@@ -18653,7 +18653,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>cd220d7153b287218814470cf312b646083a4d8a4bbbf8e82f4027ffda4d9842</hash>
+         <hash>91a92760d5ad18b61a63a52e2a8c6b2c8d3c56f602b4f1e43e486e53610c89e2</hash>
       </entry>
       <entry>
          <file>..\src\packs\ATSAME51J20A_DFP\component\adc.h</file>

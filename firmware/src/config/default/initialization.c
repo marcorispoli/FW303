@@ -137,9 +137,9 @@ void SYS_Initialize ( void* data )
 
     TC1_CompareInitialize();
 
-    TC0_TimerInitialize();
-
     RTC_Initialize();
+
+    TC0_TimerInitialize();
 
     TC3_CompareInitialize();
 
