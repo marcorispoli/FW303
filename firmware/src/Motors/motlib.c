@@ -16,8 +16,8 @@
      *  @{
      */
         #define LATCH_US_PULSE 10 //!< Defines the Latch pulse period in 1us units
-        #define MOTOR_SLEEP_OFF MOT_SLEEP_Set() //!<  Exit the Motor Sleep Mode macro
-        #define MOTOR_SLEEP_ON MOT_SLEEP_Clear() //!<  Set the Motor  Sleep Mode macro
+        #define MOTOR_SLEEP_OFF uC_MOT_SLEEP_Set() //!<  Exit the Motor Sleep Mode macro
+        #define MOTOR_SLEEP_ON uC_MOT_SLEEP_Clear() //!<  Set the Motor  Sleep Mode macro
 
         static volatile bool wait_flag; //!< This is the flag used for the 1us waiting routine
         
@@ -67,7 +67,7 @@ void wait_us(unsigned short utime){
 }
 
 void manageMotorLatch(void){
-    for(int i=0; i <= MOTOR_M5; i++){
+    for(int i=0; i <= LAST_MOTOR_ID; i++){
         if(!motor_latch_request[i]) continue;
         setLatch(i);
         motor_latch_request[i] = false;
@@ -97,49 +97,59 @@ void setLatch(_MOTOR_ID_t motid){
         
     // Set the BUS value before to latch the data to the target motor 
     unsigned char bus = *((unsigned char*) &motor_latch[motid]);
-    if(bus & 0x1 ) uc_IA_Set();
-    else uc_IA_Clear();
-    if(bus & 0x2 ) uc_IB_Set();
-    else uc_IB_Clear();
-    if(bus & 0x4 ) uc_MS1_Set();
-    else uc_MS1_Clear();
-    if(bus & 0x8 ) uc_MS2_Set();
-    else uc_MS2_Clear();
-    if(bus & 0x10 ) uc_DIR_Set();
-    else uc_DIR_Clear();
-    if(bus & 0x20 ) uc_ENA_Set();
-    else uc_ENA_Clear();
-    if(bus & 0x40 ) uc_RST_Set();
-    else uc_RST_Clear();
-    if(bus & 0x80 ) uc_ENASTEP_Set();
-    else uc_ENASTEP_Clear();
+    if(bus & 0x1 ) uC_IA_Set();
+    else uC_IA_Clear();
+    if(bus & 0x2 ) uC_IB_Set();
+    else uC_IB_Clear();
+    if(bus & 0x4 ) uC_MS1_Set();
+    else uC_MS1_Clear();
+    if(bus & 0x8 ) uC_MS2_Set();
+    else uC_MS2_Clear();
+    if(bus & 0x10 ) uC_DIR_Set();
+    else uC_DIR_Clear();
+    if(bus & 0x20 ) uC_ENA_Set();
+    else uC_ENA_Clear();
+    if(bus & 0x40 ) uC_RST_Set();
+    else uC_RST_Clear();
+    if(bus & 0x80 ) uC_ENASTEP_Set();
+    else uC_ENASTEP_Clear();
      
     // Latches the target motor    
     switch(motid){
-        case MOTOR_M1: 
-            uc_LATCH_M1_Set();
+        case MOTOR_LEFT_ID: 
+            uC_LATCH_LEFT_Set();
             wait_us(LATCH_US_PULSE);
-            uc_LATCH_M1_Clear();
+            uC_LATCH_LEFT_Clear();
         break;
-        case MOTOR_M2: 
-            uc_LATCH_M2_Set();
+        case MOTOR_RIGHT_ID: 
+            uC_LATCH_RIGHT_Set();
             wait_us(LATCH_US_PULSE);
-            uc_LATCH_M2_Clear();
+            uC_LATCH_RIGHT_Clear();
         break;
-        case MOTOR_M3: 
-            uc_LATCH_M3_Set();
+        case MOTOR_FRONT_ID: 
+            uC_LATCH_FRONT_Set();
             wait_us(LATCH_US_PULSE);
-            uc_LATCH_M3_Clear();
+            uC_LATCH_FRONT_Clear();
         break;
-        case MOTOR_M4: 
-            uc_LATCH_M4_Set();
+        case MOTOR_BACK_ID: 
+            uC_LATCH_BACK_Set();
             wait_us(LATCH_US_PULSE);
-            uc_LATCH_M4_Clear();
+            uC_LATCH_BACK_Clear();
         break;
-        case MOTOR_M5: 
-            uc_LATCH_M5_Set();
+        case MOTOR_TRAP_ID: 
+            uC_LATCH_TRAP_Set();
             wait_us(LATCH_US_PULSE);
-            uc_LATCH_M5_Clear();
+            uC_LATCH_TRAP_Clear();
+        break;
+        case MOTOR_MIRROR_ID: 
+            uC_LATCH_MIRROR_Set();
+            wait_us(LATCH_US_PULSE);
+            uC_LATCH_MIRROR_Clear();
+        break;
+        case MOTOR_FILTER_ID: 
+            uC_LATCH_FILTER_Set();
+            wait_us(LATCH_US_PULSE);
+            uC_LATCH_FILTER_Clear();
         break;
     }
 }
@@ -162,7 +172,7 @@ void setLatch(_MOTOR_ID_t motid){
 void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, MOT_DIRECTION_t dir ){
     
     // Checks the motor id value
-    if(motid > MOTOR_M5) return;
+    if(motid > LAST_MOTOR_ID) return;
     
     // Sets the motor bus lines
     motor_latch[motid].ILIM =   torque;
@@ -196,7 +206,7 @@ void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, M
 void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque){
     
     // Checks the motor id value
-    if(motid > MOTOR_M5) return;    
+    if(motid > LAST_MOTOR_ID) return;    
     
     // Limits the torque applicable to a LOW or DISABLE value
     if(torque > MOT_TORQUE_LOW) torque = MOT_TORQUE_LOW;
@@ -223,7 +233,7 @@ void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque){
 void motorDisable(_MOTOR_ID_t motid){
     
     // Checks the motor id value    
-    if(motid > MOTOR_M5) return;    
+    if(motid > LAST_MOTOR_ID) return;    
     
      // Set the motor bus lines
     motor_latch[motid].MOTENA = MOT_ENA_OFF;
@@ -243,23 +253,25 @@ void motorDisable(_MOTOR_ID_t motid){
  * + The Motors are initialized with a disable mode;
  * 
  */
-void motorsInitialize(void){
+void motorLibInitialize(void){
 
     // Register the callback for the TC0 timer
     TC0_TimerCallbackRegister(latch_1us_callback,0);    
 
     // Latch reset High
-    uc_LATCH_CLR_Set();
+    uC_LATCH_CLR_Set();
     
     // Exits from the Motor sleep mode
     MOTOR_SLEEP_OFF;
             
     // Reset Latches
-    uc_LATCH_M1_Clear();
-    uc_LATCH_M2_Clear();
-    uc_LATCH_M3_Clear();
-    uc_LATCH_M4_Clear();
-    uc_LATCH_M5_Clear();
+    uC_LATCH_LEFT_Clear();
+    uC_LATCH_RIGHT_Clear();
+    uC_LATCH_FRONT_Clear();
+    uC_LATCH_BACK_Clear();
+    uC_LATCH_TRAP_Clear();
+    uC_LATCH_MIRROR_Clear();
+    uC_LATCH_FILTER_Clear();
     
     
     // INitializes the Motor BUS lines
@@ -274,87 +286,102 @@ void motorsInitialize(void){
         setLatch(i);
     }
     
-    motorBackInit();
-    motorFrontInit();
-    motorLeftInit();
-    motorRightInit();
-    motorTrapInit();
+    
 }
 
 void setTcPeriod(_MOTOR_ID_t motid, uint16_t period){
     switch(motid){
-        case MOTOR_M1: 
-            
+        case MOTOR_LEFT_ID:             
             TC1_CompareStop();    
             TC1_Compare16bitPeriodSet(period);
-            TC1_CompareStart();
-            
+            TC1_CompareStart();            
         break;
-        case MOTOR_M2: 
+        case MOTOR_RIGHT_ID: 
             TC2_CompareStop();    
             TC2_Compare16bitPeriodSet(period);
             TC2_CompareStart();
             
         break;
-        case MOTOR_M3: 
+        case MOTOR_FRONT_ID: 
             TC3_CompareStop();    
             TC3_Compare16bitPeriodSet(period);
             TC3_CompareStart();
             
         break;
-        case MOTOR_M4: 
+        case MOTOR_BACK_ID: 
             TC4_CompareStop();    
             TC4_Compare16bitPeriodSet(period);
             TC4_CompareStart();
             
         break;
-        case MOTOR_M5: 
+        case MOTOR_TRAP_ID: 
             TC5_CompareStop();    
             TC5_Compare16bitPeriodSet(period);
-            TC5_CompareStart();
-            
+            TC5_CompareStart();            
+        break;
+        case MOTOR_MIRROR_ID: 
+            TCC0_CompareStop();    
+            TCC0_Compare24bitPeriodSet(period);
+            TCC0_CompareStart();            
+        break;
+        case MOTOR_FILTER_ID: 
+            TCC1_CompareStop();    
+            TCC1_Compare24bitPeriodSet(period);
+            TCC1_CompareStart();            
         break;
     }
 }
 
 void motorRegisterTcCallback(_MOTOR_ID_t motid, void (*fun_ptr)(TC_COMPARE_STATUS status, uintptr_t context) ){
     switch(motid){
-        case MOTOR_M1: 
+        case MOTOR_LEFT_ID: 
             TC1_CompareCallbackRegister(fun_ptr, 0);
         break;
-        case MOTOR_M2: 
+        case MOTOR_RIGHT_ID: 
             TC2_CompareCallbackRegister(fun_ptr, 0);
         break;
-        case MOTOR_M3: 
+        case MOTOR_FRONT_ID: 
            TC3_CompareCallbackRegister(fun_ptr, 0);
         break;
-        case MOTOR_M4: 
+        case MOTOR_BACK_ID: 
             TC4_CompareCallbackRegister(fun_ptr, 0);
 
         break;
-        case MOTOR_M5: 
+        case MOTOR_TRAP_ID: 
             TC5_CompareCallbackRegister(fun_ptr, 0);
+        break;
+        case MOTOR_MIRROR_ID: 
+            TCC0_CompareCallbackRegister(fun_ptr, 0);
+        break;
+        case MOTOR_FILTER_ID: 
+            TCC0_CompareCallbackRegister(fun_ptr, 0);
         break;
     }
 }
 
 void stopTc(_MOTOR_ID_t motid){
     switch(motid){
-        case MOTOR_M1: 
+        case MOTOR_LEFT_ID: 
             TC1_CompareStop();
         break;
-        case MOTOR_M2: 
+        case MOTOR_RIGHT_ID: 
             TC2_CompareStop();
         break;
-        case MOTOR_M3: 
+        case MOTOR_FRONT_ID: 
            TC3_CompareStop();
         break;
-        case MOTOR_M4: 
+        case MOTOR_BACK_ID: 
             TC4_CompareStop();
 
         break;
-        case MOTOR_M5: 
+        case MOTOR_TRAP_ID: 
             TC5_CompareStop();
+        break;
+        case MOTOR_MIRROR_ID: 
+            TCC0_CompareStop();
+        break;
+        case MOTOR_FILTER_ID: 
+            TCC1_CompareStop();
         break;
     }
 }
@@ -363,7 +390,7 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
     uint16_t current_period;
     
     switch(motid){
-        case MOTOR_M1: 
+        case MOTOR_LEFT_ID: 
             current_period = TC1_Compare16bitPeriodGet();
             if(current_period > final){
                 TC1_CompareStop();    
@@ -371,7 +398,7 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
                 TC1_CompareStart();
             }
         break;
-        case MOTOR_M2: 
+        case MOTOR_RIGHT_ID: 
             current_period = TC2_Compare16bitPeriodGet();
             if(current_period > final){
                 TC2_CompareStop();    
@@ -380,7 +407,7 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
             }
             
         break;
-        case MOTOR_M3: 
+        case MOTOR_FRONT_ID: 
             current_period = TC3_Compare16bitPeriodGet();
             if(current_period > final){
                 TC3_CompareStop();    
@@ -390,7 +417,7 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
 
             
         break;
-        case MOTOR_M4: 
+        case MOTOR_BACK_ID: 
             current_period = TC4_Compare16bitPeriodGet();
             if(current_period > final){
                 TC4_CompareStop();    
@@ -399,12 +426,30 @@ void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
             }
 
         break;
-        case MOTOR_M5: 
+        case MOTOR_TRAP_ID: 
             current_period = TC5_Compare16bitPeriodGet();
             if(current_period > final){
                 TC5_CompareStop();    
                 TC5_Compare16bitPeriodSet(current_period - ramp);
                 TC5_CompareStart();
+            }
+
+        break;
+        case MOTOR_MIRROR_ID: 
+            current_period = TCC0_Compare24bitPeriodGet();
+            if(current_period > final){
+                TCC0_CompareStop();    
+                TCC0_Compare24bitPeriodSet(current_period - ramp);
+                TCC0_CompareStart();
+            }
+
+        break;
+        case MOTOR_FILTER_ID: 
+            current_period = TCC1_Compare24bitPeriodGet();
+            if(current_period > final){
+                TCC1_CompareStop();    
+                TCC1_Compare24bitPeriodSet(current_period - ramp);
+                TCC1_CompareStart();
             }
 
         break;

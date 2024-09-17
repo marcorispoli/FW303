@@ -12,10 +12,10 @@ static void motorTrapCallback(TC_COMPARE_STATUS status, uintptr_t context); //!<
 #define mgToSteps(val) ( ((uint32_t) val * (uint32_t) uSTEP) / ((uint32_t) 376) ) //!< Macro conversion from mg (milli degree)to u-pulse
 #define stepsToMg(val) ( ((uint32_t) val * (uint32_t) 376) / ((uint32_t) uSTEP) ) //!< Macro conversion from u-step to mg (milli degree))
 
-#define MOTOR_ID MOTOR_M5
-#define MOTOR_STEP_SET uc_STEP_M5_Set()
-#define MOTOR_STEP_CLEAR uc_STEP_M5_Clear()
-#define OPTO_GET OPTO_TRAP_Get()
+#define MOTOR_ID MOTOR_TRAP_ID
+#define MOTOR_STEP_SET uC_STEP_TRAP_Set()
+#define MOTOR_STEP_CLEAR uC_STEP_TRAP_Clear()
+#define OPTO_GET uC_OPTO_TRAP_Get()
 #define MOTOR_DATA trapMotor
 
 #define HOME_EXTRA_STEPS 10 //!< Macro setting the extra steps executed entering hte home position

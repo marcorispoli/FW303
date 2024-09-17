@@ -12,10 +12,10 @@ static void motorLeftCallback(TC_COMPARE_STATUS status, uintptr_t context); //!<
 #define umToSteps(val) ( ((uint32_t) val * (uint32_t) uSTEP) / ((uint32_t) 100) ) //!< Macro conversion from um to u-pulse
 #define stepsToum(val) ( ((uint32_t) val * (uint32_t) 100) / ((uint32_t) uSTEP) ) //!< Macro conversion from step to um
 
-#define MOTOR_ID MOTOR_M3
-#define MOTOR_STEP_SET uc_STEP_M3_Set()
-#define MOTOR_STEP_CLEAR uc_STEP_M3_Clear()
-#define OPTO_GET OPTO_L_Get()
+#define MOTOR_ID MOTOR_LEFT_ID
+#define MOTOR_STEP_SET uC_STEP_LEFT_Set()
+#define MOTOR_STEP_CLEAR uC_STEP_LEFT_Clear()
+#define OPTO_GET uC_OPTO_LEFT_Get()
 #define MOTOR_DATA leftMotor
 
 #define HOME_EXTRA_STEPS 10 //!< Macro setting the extra steps executed entering hte home position

@@ -68,8 +68,12 @@ int main ( void )
     // ADC1_ConversionResultGet()
     
     // Initializes the motors with the common routines
-    motorsInitialize();   
-   
+    motorLibInitialize();   
+    motorBackInit();
+    motorFrontInit();
+    motorLeftInit();
+    motorRightInit();
+    motorTrapInit();
     
     while ( true )
     {

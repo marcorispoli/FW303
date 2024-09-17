@@ -1,20 +1,24 @@
 /*******************************************************************************
-  NVIC PLIB Implementation
+  Timer/Counter for Control(TCC) Peripheral Library Interface Header File
 
-  Company:
+  Company
     Microchip Technology Inc.
 
-  File Name:
-    plib_nvic.c
+  File Name
+    plib_tcc_common.h
 
-  Summary:
-    NVIC PLIB Source File
+  Summary
+    TCC peripheral library interface.
 
-  Description:
-    None
+  Description
+    This file defines the interface to the TCC peripheral library. This
+    library provides access to and control of the associated peripheral
+    instance.
+
 
 *******************************************************************************/
 
+// DOM-IGNORE-BEGIN
 /*******************************************************************************
 * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
 *
@@ -37,81 +41,67 @@
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
+// DOM-IGNORE-END
 
-#include "device.h"
-#include "plib_nvic.h"
-
+#ifndef PLIB_TCC_COMMON_H    // Guards against multiple inclusion
+#define PLIB_TCC_COMMON_H
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: NVIC Implementation
+// Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
+/*  This section lists the other files that are included in this file.
+*/
 
-void NVIC_Initialize( void )
+#include <stdbool.h>
+#include <stddef.h>
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    extern "C" {
+
+#endif
+// DOM-IGNORE-END
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: Data Types
+// *****************************************************************************
+// *****************************************************************************
+/*  The following data type definitions are used by the functions in this
+    interface and should be considered part it.
+*/
+// *****************************************************************************
+
+typedef void (*TCC_CALLBACK)( uint32_t status, uintptr_t context );
+// *****************************************************************************
+
+typedef struct
 {
-    /* Priority 0 to 7 and no sub-priority. 0 is the highest priority */
-    NVIC_SetPriorityGrouping( 0x00 );
+    TCC_CALLBACK callback_fn;
+    uintptr_t context;
+}TCC_CALLBACK_OBJECT;
 
-    /* Enable NVIC Controller */
-    __DMB();
-    __enable_irq();
-
-    /* Enable the interrupt sources and configure the priorities as configured
-     * from within the "Interrupt Manager" of MHC. */
-    NVIC_SetPriority(RTC_IRQn, 7);
-    NVIC_EnableIRQ(RTC_IRQn);
-    NVIC_SetPriority(CAN0_IRQn, 7);
-    NVIC_EnableIRQ(CAN0_IRQn);
-    NVIC_SetPriority(TCC0_OTHER_IRQn, 7);
-    NVIC_EnableIRQ(TCC0_OTHER_IRQn);
-    NVIC_SetPriority(TCC1_OTHER_IRQn, 7);
-    NVIC_EnableIRQ(TCC1_OTHER_IRQn);
-    NVIC_SetPriority(TC0_IRQn, 7);
-    NVIC_EnableIRQ(TC0_IRQn);
-    NVIC_SetPriority(TC1_IRQn, 7);
-    NVIC_EnableIRQ(TC1_IRQn);
-    NVIC_SetPriority(TC2_IRQn, 7);
-    NVIC_EnableIRQ(TC2_IRQn);
-    NVIC_SetPriority(TC3_IRQn, 7);
-    NVIC_EnableIRQ(TC3_IRQn);
-    NVIC_SetPriority(TC4_IRQn, 7);
-    NVIC_EnableIRQ(TC4_IRQn);
-    NVIC_SetPriority(TC5_IRQn, 7);
-    NVIC_EnableIRQ(TC5_IRQn);
-
-
-
-}
-
-void NVIC_INT_Enable( void )
+typedef enum 
 {
-    __DMB();
-    __enable_irq();
-}
+    TCC_COMMAND_NONE,
+    TCC_COMMAND_START_RETRIGGER,
+    TCC_COMMAND_STOP,
+    TCC_COMMAND_FORCE_UPDATE,
+    TCC_COMMAND_READ_SYNC
+}TCC_COMMAND;
 
-bool NVIC_INT_Disable( void )
-{
-    bool processorStatus;
 
-    processorStatus = (bool) (__get_PRIMASK() == 0);
 
-    __disable_irq();
-    __DMB();
 
-    return processorStatus;
-}
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
 
-void NVIC_INT_Restore( bool state )
-{
-    if( state == true )
-    {
-        __DMB();
-        __enable_irq();
     }
-    else
-    {
-        __disable_irq();
-        __DMB();
-    }
-}
+
+#endif
+// DOM-IGNORE-END
+
+#endif /* PLIB_TCC_COMMON_H */

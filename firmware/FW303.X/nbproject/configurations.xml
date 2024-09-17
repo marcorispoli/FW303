@@ -41,6 +41,11 @@
               <itemPath>../src/config/default/peripheral/tc/plib_tc3.h</itemPath>
               <itemPath>../src/config/default/peripheral/tc/plib_tc2.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="tcc" displayName="tcc" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/tcc/plib_tcc_common.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tcc/plib_tcc1.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tcc/plib_tcc0.h</itemPath>
+            </logicalFolder>
           </logicalFolder>
           <itemPath>../src/config/default/toolchain_specifics.h</itemPath>
           <itemPath>../src/config/default/interrupts.h</itemPath>
@@ -231,6 +236,10 @@
               <itemPath>../src/config/default/peripheral/tc/plib_tc3.c</itemPath>
               <itemPath>../src/config/default/peripheral/tc/plib_tc2.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="tcc" displayName="tcc" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/tcc/plib_tcc1.c</itemPath>
+              <itemPath>../src/config/default/peripheral/tcc/plib_tcc0.c</itemPath>
+            </logicalFolder>
           </logicalFolder>
           <logicalFolder name="stdio" displayName="stdio" projectFiles="true">
             <itemPath>../src/config/default/stdio/xc32_monitor.c</itemPath>
@@ -278,7 +287,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>pk4hybrid</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>4.35</languageToolchainVersion>
+        <languageToolchainVersion>3.01</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

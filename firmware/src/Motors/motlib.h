@@ -87,15 +87,18 @@
             MOT_ENASTEP_ON  //!< Motor Step Enabled
         }MOT_ENASTEP_t;
 
-        #define MOTOR_LEN 5 //!< Defines the maximum number of implemented motors
+        #define MOTOR_LEN 7 //!< Defines the maximum number of implemented motors
         
         /// This enumeration type defines the identifier of the stepper motors
         typedef enum{
-            MOTOR_M1 = 0,   //!< Motor M1 identifier
-            MOTOR_M2,       //!< Motor M2 identifier
-            MOTOR_M3,       //!< Motor M3 identifier
-            MOTOR_M4,       //!< Motor M4 identifier
-            MOTOR_M5,       //!< Motor M5 identifier 
+            MOTOR_LEFT_ID = 0,   //!< Left Motor identifier
+            MOTOR_RIGHT_ID,       //!< Right Motor identifier
+            MOTOR_FRONT_ID,       //!< Front Motor identifier
+            MOTOR_BACK_ID,       //!< Back Motor identifier
+            MOTOR_TRAP_ID,       //!< Trap Motor identifier 
+            MOTOR_FILTER_ID,       //!< Filter Motor identifier 
+            MOTOR_MIRROR_ID,        //!< Mirror Motor identifier 
+            LAST_MOTOR_ID = MOTOR_MIRROR_ID    
         }_MOTOR_ID_t;
 
      /// @}   moduleConstants
@@ -157,7 +160,7 @@
      *  @{
      */
         
-        ext void motorsInitialize(void); //!< Module initialization function
+        ext void motorLibInitialize(void); //!< Module initialization function
         ext void motorDisable(_MOTOR_ID_t motid);//!< Disables the motor
         ext void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, MOT_DIRECTION_t dir );//!< Activate the motor in a defined mode
         ext void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque); //!< Switch Off the motor with an active torque
