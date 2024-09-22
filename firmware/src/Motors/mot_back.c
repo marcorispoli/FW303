@@ -4,18 +4,30 @@
 #include "mot_back.h"
 #include "motlib.h"
 
+// The following macros define the motor identification structures in the code
+#define MOTOR_ID MOTOR_BACK_ID  //!< This is the iddentifier of the motor
+#define MOTOR_STEP_SET uC_STEP_BACK_Set() //!< This is the call to set the STEP output
+#define MOTOR_STEP_CLEAR uC_STEP_BACK_Clear() //!< This is the call to clear the STEP output
+#define OPTO_GET uC_OPTO_BACK_Get()//!< This is the call to get the zero setting photocell
+#define MOTOR_DATA backMotor//!< This is the pointer to the motor data structure
+
+
 static void motorBackCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Callback every STEP pin changes
 
-// Every full step is 0.1 mm translation
-#define uSTEP 16
-#define umToSteps(val) ( ((uint32_t) val * (uint32_t) uSTEP) / ((uint32_t) 100) ) //!< Macro conversion from um to u-pulse
-#define stepsToum(val) ( ((uint32_t) val * (uint32_t) 100) / ((uint32_t) uSTEP) ) //!< Macro conversion from step to um
+/**
+ * \ingroup backModuleConstants 
+ *  @{
+ */
+ const uint32_t _nm_per_step            =   50800;          //!< linear displacement for any step in nanometers   
+ const uint32_t _max_blade_travel       =   30000;          //!< maximum blade travel from the zero reference in micron
+ const uint32_t _max_step_per_second    =   300;            //!< maximum speed of the motor 
+ const MOT_MICROSTEP_t _ustep_control   =   MOT_uSTEP_16;   //!< microstepping used in the control
 
-#define MOTOR_ID MOTOR_BACK_ID
-#define MOTOR_STEP_SET uC_STEP_BACK_Set()
-#define MOTOR_STEP_CLEAR uC_STEP_BACK_Clear()
-#define OPTO_GET uC_OPTO_BACK_Get()
-#define MOTOR_DATA backMotor
+ /// @}   moduleConstants
+
+#define umToUsteps(val) ( ((uint32_t) val * (uint32_t) MICROSTEP(_ustep_control)) * 1000 / ((uint32_t) _nm_per_step) ) //!< Macro conversion from um to u-step
+#define UstepsToum(val) ( ((uint32_t) val * (uint32_t) _nm_per_step) / ((uint32_t) MICROSTEP(_ustep_control) * 1000) ) //!< Macro conversion from u-step to um
+
 
 #define HOME_EXTRA_STEPS 100 //!< Macro setting the extra steps executed entering hte home position
 #define MOTOR_HOME MOT_DIRCCW

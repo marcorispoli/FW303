@@ -57,6 +57,9 @@
             MOT_uSTEP_4,     //!< Motor with 1/4  Step mode: 1 pulse correspond to a 1/4 step;
             MOT_uSTEP_16     //!< Motor with 1/16 Step mode: 1 pulse correspond to a 1/16 step;
         }MOT_MICROSTEP_t;
+        const unsigned char ustep[4] = {1,2,4,16};
+        
+        #define MICROSTEP(x) (((unsigned char) x) < 4) ? ustep[(unsigned char) x] : 1
 
         /** This enumeration type defines the activation direction
          *  
