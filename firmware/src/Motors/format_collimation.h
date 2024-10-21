@@ -1,6 +1,6 @@
 
-#ifndef _MOT_BACK_H    
-#define _MOT_BACK_H
+#ifndef _MOT_FORMAT_H    
+#define _MOT_FORMAT_H
 
 #include "definitions.h"
 #include "motlib.h"
@@ -8,7 +8,7 @@
 #undef ext
 #undef ext_static
 
-#ifdef _MOT_BACK_C
+#ifdef _MOT_FORMAT_C
     #define ext
     #define ext_static static 
 #else
@@ -21,7 +21,7 @@
  * \ingroup applicationModule
  * 
  * This module implements the requirements of the back blade collimation control.
- 
+ */
 
 
  /**
@@ -107,7 +107,6 @@
 *  @{
 */
 
-        ext volatile MOTOR_STRUCT_t backMotor; //!< Motor main structure variable declaration
 
 /// @}   moduleStructures  
 
@@ -120,10 +119,8 @@
 * 
 *  @{
 */
-        ext void motorBackInit(void); //!< Module initialization function
-        ext bool activateBackCollimation(unsigned short target);//!< Activates the collimation
-
-        
+        ext void formatInit(void); //!< Module initialization function
+        ext bool activateFormatCollimation(int index);//!< format activation command to index 
         
 /// @}   publicModuleApi 
 

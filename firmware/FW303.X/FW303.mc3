@@ -1,4 +1,4 @@
-<config configName="default" projectName="FW303" configVersion="1.1" device="ATSAME51J20A" deviceLibraryClass="com.microchip.mcc.harmony.Harmony3Library" coreVersion="5.5.0">
+<config configName="default" projectName="FW303" configVersion="1.1" device="ATSAME51J20A" deviceLibraryClass="com.microchip.mcc.harmony.Harmony3Library" coreVersion="5.6.1">
    <usedPackages class="java.util.ArrayList"/>
    <usedClasses class="java.util.TreeMap">
       <entry>
@@ -7858,6 +7858,17 @@
   &lt;core dnOrder=&quot;0&quot; id=&quot;CPU_CLOCK_FREQUENCY&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;120000000&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/core&gt;
+&lt;/core&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="CoreMPU_PRIVDEFENA"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
+  &lt;core dnOrder=&quot;0&quot; id=&quot;CoreMPU_PRIVDEFENA&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -18329,7 +18340,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;tc1&gt;
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_COMPARE_CC0&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;48&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;8&quot;/&gt;
     &lt;/Values&gt;
   &lt;/tc1&gt;
 &lt;/tc1&gt;
@@ -18341,7 +18352,7 @@
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_COMPARE_CC1&quot;&gt;
     &lt;Attributes dnOrder=&quot;0&quot;&gt;
       &lt;Long dnOrder=&quot;0&quot; id=&quot;max&quot;&gt;
-        &lt;Value dnOrder=&quot;0&quot;&gt;48&lt;/Value&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;8&lt;/Value&gt;
       &lt;/Long&gt;
     &lt;/Attributes&gt;
     &lt;Values dnOrder=&quot;1&quot;/&gt;
@@ -18554,7 +18565,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="tc1" name="TC_CTRLA_PRESCALER"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;tc1&gt;
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_CTRLA_PRESCALER&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;4&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/tc1&gt;
 &lt;/tc1&gt;
 </value>
@@ -18572,7 +18585,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="tc1" name="TC_FREQUENCY"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;tc1&gt;
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_FREQUENCY&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;tc1&quot; value=&quot;3000000&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/tc1&gt;
 &lt;/tc1&gt;
 </value>
@@ -18695,7 +18710,14 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="tc1" name="TC_TIMER_PERIOD"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;tc1&gt;
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_TIMER_PERIOD&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Long dnOrder=&quot;0&quot; id=&quot;max&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;65535&lt;/Value&gt;
+      &lt;/Long&gt;
+    &lt;/Attributes&gt;
+    &lt;Values dnOrder=&quot;1&quot;&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;tc1&quot; value=&quot;3000&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/tc1&gt;
 &lt;/tc1&gt;
 </value>
@@ -18717,7 +18739,12 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="tc1" name="TC_TIMER_TIME_MS"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;tc1&gt;
   &lt;tc1 dnOrder=&quot;0&quot; id=&quot;TC_TIMER_TIME_MS&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Attributes dnOrder=&quot;0&quot;&gt;
+      &lt;Float dnOrder=&quot;0&quot; id=&quot;max&quot;&gt;
+        &lt;Value dnOrder=&quot;0&quot;&gt;21.845333&lt;/Value&gt;
+      &lt;/Float&gt;
+    &lt;/Attributes&gt;
+    &lt;Values dnOrder=&quot;1&quot;/&gt;
   &lt;/tc1&gt;
 &lt;/tc1&gt;
 </value>
@@ -25114,7 +25141,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>ee6a6b39cf867877b3ddfe1dff15df9767c522f096491c576907a5f81d9bea73</hash>
+         <hash>9076be2d95ba891813db17051c75cbe41d0a08114763eae83207ffd66c41625a</hash>
       </entry>
       <entry>
          <file>..\src\config\default\device.h</file>
@@ -25134,7 +25161,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\initialization.c</file>
-         <hash>07abf6b6edfc14133a054462c8bfa670c3de8a7d96754bbd825db857b5f1bafc</hash>
+         <hash>7a664fbf2eff7d579ddf9a48c946f63b5c47eadbc0541abd666143d59546c147</hash>
       </entry>
       <entry>
          <file>..\src\config\default\interrupts.c</file>
@@ -25226,7 +25253,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\tc\plib_tc1.c</file>
-         <hash>e8ed9825188fe5922fc9a93779f901e98d5f6a48f7647d229e1be6fd13f2278a</hash>
+         <hash>20129b2c70f4f4239d675a858b7d664e33391dba9cc491f92a3ba82efe94ac2c</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\tc\plib_tc1.h</file>

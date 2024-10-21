@@ -51,9 +51,9 @@
      */
         // Can Module Definitions
         static const unsigned char   MET_CAN_APP_DEVICE_ID    =  0x12 ;     //!< Application DEVICE CAN Id address
-        static const unsigned char   MET_CAN_STATUS_REGISTERS =  4 ;        //!< Defines the total number of implemented STATUS registers 
-        static const unsigned char   MET_CAN_DATA_REGISTERS   =  3 ;        //!< Defines the total number of implemented Application DATA registers 
-        static const unsigned char   MET_CAN_PARAM_REGISTERS  =  43 ;       //!< Defines the total number of implemented PARAMETER registers 
+        static const unsigned char   MET_CAN_STATUS_REGISTERS =  2 ;        //!< Defines the total number of implemented STATUS registers 
+        static const unsigned char   MET_CAN_DATA_REGISTERS   =  0 ;        //!< Defines the total number of implemented Application DATA registers 
+        static const unsigned char   MET_CAN_PARAM_REGISTERS  =  54 ;       //!< Defines the total number of implemented PARAMETER registers 
 
      /// @}   moduleConstants
 
@@ -145,19 +145,7 @@
      *  @{
      */
 
-         /// This is the list of the implemented DATA REGISTERS    
-         typedef enum{
-            DATA_CALIBRATION_FB_POSITION = 0, //!< This is the Front and Back calibration blades positions
-            DATA_CALIBRATION_LR_POSITION, //!< This is the Left and Right calibration blades positions
-            DATA_CALIBRATION_T_POSITION, //!< This is the Trap calibration blades positions
-         }PROTO_DATA_t;
-        
-        #define GET_CALIB_FRONT_POSITION  ((unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_FB_POSITION, 0) + 256 * (unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_FB_POSITION, 1))
-        #define GET_CALIB_BACK_POSITION  ((unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_FB_POSITION, 2) + 256 * (unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_FB_POSITION, 3))
-        #define GET_CALIB_LEFT_POSITION  ((unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_LR_POSITION, 0) + 256 * (unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_LR_POSITION, 1))
-        #define GET_CALIB_RIGHT_POSITION  ((unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_LR_POSITION, 2) + 256 * (unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_LR_POSITION, 3))
-        #define GET_CALIB_TRAP_POSITION  ((unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_T_POSITION, 0) + 256 * (unsigned short) MET_Can_Protocol_GetData(DATA_CALIBRATION_T_POSITION, 1))
-        
+         
         
     /// @}   DataRegisterGroup
 
@@ -166,79 +154,15 @@
      *  This section describes the implementation of the Application PARAMETER Registers 
      *  @{
      */
+        #define MAX_FORMAT_INDEX 20
         
-        /// This is the list of the implemented PARAMETER REGISTERS        
-        typedef enum{
-            PARAM_FT_2D_COLLI = 0, //!< This is the parameter setting the Front and Trap 2D positions           
-            PARAM_LR_STANDARD1,//!< This is the parameter setting the Custom1 Left and Right blades positions
-            PARAM_B_STANDARD1,//!< This is the parameter setting the Custom1 Back blade positions
-            PARAM_LR_STANDARD2,//!< This is the parameter setting the Custom2 Left and Right blades positions
-            PARAM_B_STANDARD2,//!< This is the parameter setting the Custom2 Back blade positions
-            PARAM_LR_STANDARD3,//!< This is the parameter setting the Custom3 Left and Right blades positions
-            PARAM_B_STANDARD3,//!< This is the parameter setting the Custom3 Back blade positions
-            PARAM_LR_STANDARD4,//!< This is the parameter setting the Custom4 Left and Right blades positions
-            PARAM_B_STANDARD4,//!< This is the parameter setting the Custom4 Back blade positions
-            PARAM_LR_STANDARD5,//!< This is the parameter setting the Custom5 Left and Right blades positions
-            PARAM_B_STANDARD5,//!< This is the parameter setting the Custom5 Back blade positions
-            PARAM_LR_STANDARD6,//!< This is the parameter setting the Custom6 Left and Right blades positions
-            PARAM_B_STANDARD6,//!< This is the parameter setting the Custom6 Back blade positions
-            PARAM_LR_STANDARD7,//!< This is the parameter setting the Custom7 Left and Right blades positions
-            PARAM_B_STANDARD7,//!< This is the parameter setting the Custom7 Back blade positions
-            PARAM_LR_STANDARD8,//!< This is the parameter setting the Custom8 Left and Right blades positions
-            PARAM_B_STANDARD8,//!< This is the parameter setting the Custom8 Back blade positions
-            PARAM_LR_STANDARD9,//!< This is the parameter setting the Custom9 Left and Right blades positions
-            PARAM_B_STANDARD9,//!< This is the parameter setting the Custom9 Back blade positions
-            PARAM_LR_STANDARD10,//!< This is the parameter setting the Custom10 Left and Right blades positions
-            PARAM_B_STANDARD10,//!< This is the parameter setting the Custom10 Back blade positions
-            PARAM_LR_STANDARD11,//!< This is the parameter setting the Custom11 Left and Right blades positions
-            PARAM_B_STANDARD11,//!< This is the parameter setting the Custom11 Back blade positions
-            PARAM_LR_STANDARD12,//!< This is the parameter setting the Custom12 Left and Right blades positions
-            PARAM_B_STANDARD12,//!< This is the parameter setting the Custom12 Back blade positions
-            PARAM_LR_STANDARD13,//!< This is the parameter setting the Custom13 Left and Right blades positions
-            PARAM_B_STANDARD13,//!< This is the parameter setting the Custom13 Back blade positions
-            PARAM_LR_STANDARD14,//!< This is the parameter setting the Custom14 Left and Right blades positions
-            PARAM_B_STANDARD14,//!< This is the parameter setting the Custom14 Back blade positions
-            PARAM_LR_STANDARD15,//!< This is the parameter setting the Custom15 Left and Right blades positions
-            PARAM_B_STANDARD15,//!< This is the parameter setting the Custom15 Back blade positions
-            PARAM_LR_STANDARD16,//!< This is the parameter setting the Custom16 Left and Right blades positions
-            PARAM_B_STANDARD16,//!< This is the parameter setting the Custom16 Back blade positions
-            PARAM_LR_STANDARD17,//!< This is the parameter setting the Custom17 Left and Right blades positions
-            PARAM_B_STANDARD17,//!< This is the parameter setting the Custom17 Back blade positions
-            PARAM_LR_STANDARD18,//!< This is the parameter setting the Custom18 Left and Right blades positions
-            PARAM_B_STANDARD18,//!< This is the parameter setting the Custom18 Back blade positions
-            PARAM_LR_STANDARD19,//!< This is the parameter setting the Custom19 Left and Right blades positions
-            PARAM_B_STANDARD19,//!< This is the parameter setting the Custom19 Back blade positions
-            PARAM_LR_STANDARD20,//!< This is the parameter setting the Custom20 Left and Right blades positions
-            PARAM_B_STANDARD20,//!< This is the parameter setting the Custom20 Back blade positions
-        
-        }PROTO_PARAMETERS_t;
-
-         typedef enum{
-             FORMAT_NOT_STANDARD = 0,
-             FORMAT_STANDARD1,
-             FORMAT_STANDARD2,
-             FORMAT_STANDARD3,
-             FORMAT_STANDARD4,
-             FORMAT_STANDARD5,
-             FORMAT_STANDARD6,
-             FORMAT_STANDARD7,
-             FORMAT_STANDARD8,
-             FORMAT_STANDARD9,
-             FORMAT_STANDARD10,
-             FORMAT_STANDARD11,
-             FORMAT_STANDARD12,
-             FORMAT_STANDARD13,
-             FORMAT_STANDARD14,
-             FORMAT_STANDARD15,
-             FORMAT_STANDARD16,
-             FORMAT_STANDARD17,
-             FORMAT_STANDARD18,
-             FORMAT_STANDARD19,
-             FORMAT_STANDARD20,
-             FORMAT_STANDARD_LAST_SELECTABLE,
-         }PROTO_FORMAD_2D_INDEX;
-        ext bool getStandard2DBladeParameters(unsigned char index, unsigned short* front, unsigned short* back,unsigned short* left, unsigned short* right, unsigned short* trap); //!< This function returns the blades configuration from the selection index
-        ext bool getCalibBladeParameters(unsigned short* front, unsigned short* back,unsigned short* left, unsigned short* right, unsigned short* trap);//!< This function returns the blades for calibration
+        ext unsigned short protocolGetFormatLeft(int index); //!< This function returns the steps for the Left blade for the Index-format
+        ext unsigned short protocolGetFormatRight(int index); //!< This function returns the steps for the Right blade for the Index-format
+        ext unsigned short protocolGetFormatBack(int index); //!< This function returns the steps for the Back blade for the Index-format
+        ext unsigned short protocolGetFormatFront(int index); //!< This function returns the steps for the Front blade for the Index-format
+        ext unsigned short protocolGetFormatTrap(int index); //!< This function returns the steps for the Trap blade for the Index-format
+        ext unsigned short protocolGetFilter(int index); //!< This function returns the steps for the Trap blade for the Index-format
+        ext unsigned short protocolGetMirror(void); //!< This function returns the steps for the Trap blade for the Index-format
         
     /// @}   ParamRegisterGroup
         

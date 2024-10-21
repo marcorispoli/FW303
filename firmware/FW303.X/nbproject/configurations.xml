@@ -256,16 +256,8 @@
       <itemPath>../src/license.h</itemPath>
       <itemPath>../src/Motors/motlib.c</itemPath>
       <itemPath>../src/Motors/motlib.h</itemPath>
-      <itemPath>../src/Motors/mot_back.c</itemPath>
-      <itemPath>../src/Motors/mot_back.h</itemPath>
-      <itemPath>../src/Motors/mot_front.c</itemPath>
-      <itemPath>../src/Motors/mot_front.h</itemPath>
-      <itemPath>../src/Motors/mot_left.c</itemPath>
-      <itemPath>../src/Motors/mot_left.h</itemPath>
-      <itemPath>../src/Motors/mot_right.c</itemPath>
-      <itemPath>../src/Motors/mot_right.h</itemPath>
-      <itemPath>../src/Motors/mot_trap.c</itemPath>
-      <itemPath>../src/Motors/mot_trap.h</itemPath>
+      <itemPath>../src/Motors/format_collimation.c</itemPath>
+      <itemPath>../src/Motors/format_collimation.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

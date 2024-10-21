@@ -57,7 +57,7 @@
             MOT_uSTEP_4,     //!< Motor with 1/4  Step mode: 1 pulse correspond to a 1/4 step;
             MOT_uSTEP_16     //!< Motor with 1/16 Step mode: 1 pulse correspond to a 1/16 step;
         }MOT_MICROSTEP_t;
-        const unsigned char ustep[4] = {1,2,4,16};
+        static const unsigned char ustep[4] = {1,2,4,16};
         
         #define MICROSTEP(x) (((unsigned char) x) < 4) ? ustep[(unsigned char) x] : 1
 
@@ -126,32 +126,41 @@
      
         /// Module data structure
         typedef struct{
+            
+            int id;     //!< Motor Id 
+            int steps;  //!< Number of steps executed in the current positioning
+            int target_steps;   //!< This is the target position
+            bool step_polarity;//!< This is the status of the STEP output pin
 
-            // Filter positioning data
-            bool    command_activated;  //!< A command is in execution
-            bool    position_valid;      //!< The current position is valid
-            uint32_t target_position;   //!< Define the calibrated position 
-
-            // Slot detection        
-            bool     opto_status; //!< This is a copy of the current Opto status
-            uint32_t current_pulses;//!< This is the current pulse count during transitions
-
-            // Speed regulation
-            uint16_t init_period;   //!< This is the initial period for the PWM
-            uint16_t final_period;  //!< This is the final period for the PWM
-            uint16_t ramp_rate;     //!< This is the ramp value (delta period for every period) PWM
-
+            // Ramp implementation
+            int period; //!< The current pwm period
+            int time_count;    //!< Timer implemening the pwm
+            int init_period; //!< This is the innitial period for the ramp            
+            int run_period;    //!< Minimum period (speed)
+            
+            MOT_DIRECTION_t direction_home; //!< This is the setup direction for home
+            MOT_DIRECTION_t direction_field;//!< This is the setup direction for field
+            MOT_MICROSTEP_t stepping_mode;//!< This is the setup stepping mode
+            
+            int     command_error;   //!< error code if > 0
+            bool    command_running; //!< true if the positioning is not completed
             uint8_t command_sequence;//!< This is the execution sequence index
-            bool     running;        //!< This is the motor activated flag            
-
-            uint32_t  measured_light_slot; //!< Measures the light slot pulses for diagnosys and test
-            uint32_t  measured_dark_slot; //!< Measures the dark slot pulses for diagnosys and test
-
+            
+            bool opto_status; //!< This is the last read  status of the zero photocell 
+            
         }MOTOR_STRUCT_t;
         
         ext _MOTOR_DATA_t motor_latch[MOTOR_LEN]; //!< Array of the Motor Bus lines
         ext bool motor_latch_request[MOTOR_LEN]; //!< Array of the Motor Bus line request
         
+        ext MOTOR_STRUCT_t leftMotorStruct;
+        ext MOTOR_STRUCT_t rightMotorStruct;
+        ext MOTOR_STRUCT_t backMotorStruct;
+        ext MOTOR_STRUCT_t frontMotorStruct;
+        ext MOTOR_STRUCT_t trapMotorStruct;
+        ext MOTOR_STRUCT_t mirrorMotorStruct;
+        ext MOTOR_STRUCT_t filterMotorStruct;
+
      /// @}   moduleStructures  
 
 
@@ -163,26 +172,17 @@
      *  @{
      */
         
-        ext void motorLibInitialize(void); //!< Module initialization function
-        ext void motorDisable(_MOTOR_ID_t motid);//!< Disables the motor
-        ext void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, MOT_DIRECTION_t dir );//!< Activate the motor in a defined mode
-        ext void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque); //!< Switch Off the motor with an active torque
+        ext void motorLibInitialize(void); //!< Module initialization function        
         ext void manageMotorLatch(void);
-        ext bool isLatched(_MOTOR_ID_t motid);
-        ext void stopTc(_MOTOR_ID_t motid);
-        ext void motorRegisterTcCallback(_MOTOR_ID_t motid, void (*fun_ptr)(TC_COMPARE_STATUS status, uintptr_t context) );
-        ext void setTcPeriod(_MOTOR_ID_t motid, uint16_t period);
-        ext void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp);
         
-        ext bool selectFormat2D(unsigned short left, unsigned short right, unsigned short front, unsigned short back, unsigned short trap);
-        ext bool motorsIsRunning(void);
-        ext bool motorsIsError(void);
-        ext bool leftIsError(void);
-        ext bool rightIsError(void);
-        ext bool frontIsError(void);
-        ext bool backIsError(void);
-        ext bool trapIsError(void);
-
+        ext bool isLatched(MOTOR_STRUCT_t* mot);
+        ext void motorDisable(MOTOR_STRUCT_t* mot);//!< Disables the motor
+        ext void motorOn(MOTOR_STRUCT_t* mot, MOT_ILIM_MODE_t torque, MOT_DIRECTION_t dir);//!< Activate the motor in a defined mode
+        ext void motorHold(MOTOR_STRUCT_t* mot, MOT_ILIM_MODE_t torque); //!< Switch Off the motor with an active torque
+        ext void motorStep(MOTOR_STRUCT_t* mot, bool stat);        
+        ext bool optoGet(MOTOR_STRUCT_t* mot);
+        
+        
         /// @}   publicModuleApi 
 
 

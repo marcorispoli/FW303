@@ -2,11 +2,7 @@
 
 #include "application.h"
 #include "motlib.h"
-#include "mot_back.h"
-#include "mot_front.h"
-#include "mot_left.h"
-#include "mot_right.h"
-#include "mot_trap.h"
+
 
  /**
      * \defgroup privateModuleMembers Private module members
@@ -78,9 +74,6 @@ void requestLatch(_MOTOR_ID_t motid){
     motor_latch_request[motid] = true;
 }
 
-bool isLatched(_MOTOR_ID_t motid){
-    return !motor_latch_request[motid];
-}
 
 /**
  * This function Latches the Motor Bus data to the Motor driver.
@@ -169,21 +162,21 @@ void setLatch(_MOTOR_ID_t motid){
  * @param ustep Selects the value of a Pulse;
  * @param dir Selects the direction rotation;
  */
-void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, MOT_DIRECTION_t dir ){
+void motorOn(MOTOR_STRUCT_t* mot, MOT_ILIM_MODE_t torque, MOT_DIRECTION_t dir){
     
-    // Checks the motor id value
-    if(motid > LAST_MOTOR_ID) return;
+    // Clear the Step pin
+    motorStep(mot, false);
     
     // Sets the motor bus lines
-    motor_latch[motid].ILIM =   torque;
-    motor_latch[motid].uSTEP =  ustep;
-    motor_latch[motid].DIR = dir;
+    motor_latch[mot->id].ILIM =   torque;
+    motor_latch[mot->id].uSTEP =  mot->stepping_mode;
+    motor_latch[mot->id].DIR = dir;
      
-    motor_latch[motid].MOTENA = MOT_ENA_ON;
-    motor_latch[motid].RST =    MOT_RST_OFF;
-    motor_latch[motid].ENASTEP = MOT_ENASTEP_ON;
+    motor_latch[mot->id].MOTENA = MOT_ENA_ON;
+    motor_latch[mot->id].RST =    MOT_RST_OFF;
+    motor_latch[mot->id].ENASTEP = MOT_ENASTEP_ON;
             
-    requestLatch(motid);
+    requestLatch(mot->id);
  
 }
 
@@ -203,22 +196,20 @@ void motorOn(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque, MOT_MICROSTEP_t ustep, M
  * @param motid Selects the target motor from MOTOR_M1 to MOTOR_M5; 
  * @param torque Selects the torque to be applied (limited value);
  */
-void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque){
+void motorHold(MOTOR_STRUCT_t* mot, MOT_ILIM_MODE_t torque){
     
-    // Checks the motor id value
-    if(motid > LAST_MOTOR_ID) return;    
     
     // Limits the torque applicable to a LOW or DISABLE value
     if(torque > MOT_TORQUE_LOW) torque = MOT_TORQUE_LOW;
     
     // Set the motor bus lines
-    motor_latch[motid].ILIM =   torque;     
-    motor_latch[motid].MOTENA = MOT_ENA_ON;
-    motor_latch[motid].RST =    MOT_RST_OFF;
-    motor_latch[motid].ENASTEP = MOT_ENASTEP_OFF;
+    motor_latch[mot->id].ILIM =   torque;     
+    motor_latch[mot->id].MOTENA = MOT_ENA_ON;
+    motor_latch[mot->id].RST =    MOT_RST_OFF;
+    motor_latch[mot->id].ENASTEP = MOT_ENASTEP_OFF;
             
     // Latches 
-    requestLatch(motid);
+    requestLatch(mot->id);
     
 }
 
@@ -230,18 +221,18 @@ void motorHold(_MOTOR_ID_t motid, MOT_ILIM_MODE_t torque){
  *  
  * @param motid Selects the target motor from MOTOR_M1 to MOTOR_M5; 
  */
-void motorDisable(_MOTOR_ID_t motid){
+void motorDisable(MOTOR_STRUCT_t* mot){
     
-    // Checks the motor id value    
-    if(motid > LAST_MOTOR_ID) return;    
+    // Clears the step pin
+    motorStep(mot, false);
     
      // Set the motor bus lines
-    motor_latch[motid].MOTENA = MOT_ENA_OFF;
-    motor_latch[motid].RST =    MOT_RST_ON;
-    motor_latch[motid].ENASTEP = MOT_ENASTEP_OFF;
+    motor_latch[mot->id].MOTENA = MOT_ENA_OFF;
+    motor_latch[mot->id].RST =    MOT_RST_ON;
+    motor_latch[mot->id].ENASTEP = MOT_ENASTEP_OFF;
             
     // Latches 
-    requestLatch(motid);
+    requestLatch(mot->id);
 }
 
 /**
@@ -286,222 +277,63 @@ void motorLibInitialize(void){
         setLatch(i);
     }
     
+    // Initializes the motor structures
+    rightMotorStruct.id = MOTOR_RIGHT_ID;
+    leftMotorStruct.id = MOTOR_LEFT_ID;
+    backMotorStruct.id = MOTOR_BACK_ID;
+    frontMotorStruct.id = MOTOR_FRONT_ID;
+    trapMotorStruct.id = MOTOR_TRAP_ID;
+    mirrorMotorStruct.id = MOTOR_MIRROR_ID;
+    filterMotorStruct.id = MOTOR_FILTER_ID;
+    
     
 }
 
-void setTcPeriod(_MOTOR_ID_t motid, uint16_t period){
-    switch(motid){
-        case MOTOR_LEFT_ID:             
-            TC1_CompareStop();    
-            TC1_Compare16bitPeriodSet(period);
-            TC1_CompareStart();            
-        break;
-        case MOTOR_RIGHT_ID: 
-            TC2_CompareStop();    
-            TC2_Compare16bitPeriodSet(period);
-            TC2_CompareStart();
-            
-        break;
-        case MOTOR_FRONT_ID: 
-            TC3_CompareStop();    
-            TC3_Compare16bitPeriodSet(period);
-            TC3_CompareStart();
-            
-        break;
-        case MOTOR_BACK_ID: 
-            TC4_CompareStop();    
-            TC4_Compare16bitPeriodSet(period);
-            TC4_CompareStart();
-            
-        break;
-        case MOTOR_TRAP_ID: 
-            TC5_CompareStop();    
-            TC5_Compare16bitPeriodSet(period);
-            TC5_CompareStart();            
-        break;
-        case MOTOR_MIRROR_ID: 
-            TCC0_CompareStop();    
-            TCC0_Compare24bitPeriodSet(period);
-            TCC0_CompareStart();            
-        break;
-        case MOTOR_FILTER_ID: 
-            TCC1_CompareStop();    
-            TCC1_Compare24bitPeriodSet(period);
-            TCC1_CompareStart();            
-        break;
+
+bool optoGet(MOTOR_STRUCT_t* mot){
+    switch(mot->id){
+        case MOTOR_LEFT_ID: mot->opto_status = uC_OPTO_LEFT_Get();break;
+        case MOTOR_RIGHT_ID: mot->opto_status = uC_OPTO_RIGHT_Get();break;
+        case MOTOR_FRONT_ID: mot->opto_status = uC_OPTO_FRONT_Get();break; 
+        case MOTOR_BACK_ID: mot->opto_status = uC_OPTO_BACK_Get();break;
+        case MOTOR_TRAP_ID: mot->opto_status = uC_OPTO_TRAP_Get();break;
+        case MOTOR_MIRROR_ID: mot->opto_status = uC_OPTO_MIRROR_Get();break;
+        case MOTOR_FILTER_ID: mot->opto_status = uC_OPTO_FILTER_Get();break;
     }
-}
-
-void motorRegisterTcCallback(_MOTOR_ID_t motid, void (*fun_ptr)(TC_COMPARE_STATUS status, uintptr_t context) ){
-    switch(motid){
-        case MOTOR_LEFT_ID: 
-            TC1_CompareCallbackRegister(fun_ptr, 0);
-        break;
-        case MOTOR_RIGHT_ID: 
-            TC2_CompareCallbackRegister(fun_ptr, 0);
-        break;
-        case MOTOR_FRONT_ID: 
-           TC3_CompareCallbackRegister(fun_ptr, 0);
-        break;
-        case MOTOR_BACK_ID: 
-            TC4_CompareCallbackRegister(fun_ptr, 0);
-
-        break;
-        case MOTOR_TRAP_ID: 
-            TC5_CompareCallbackRegister(fun_ptr, 0);
-        break;
-        case MOTOR_MIRROR_ID: 
-            TCC0_CompareCallbackRegister(fun_ptr, 0);
-        break;
-        case MOTOR_FILTER_ID: 
-            TCC0_CompareCallbackRegister(fun_ptr, 0);
-        break;
-    }
-}
-
-void stopTc(_MOTOR_ID_t motid){
-    switch(motid){
-        case MOTOR_LEFT_ID: 
-            TC1_CompareStop();
-        break;
-        case MOTOR_RIGHT_ID: 
-            TC2_CompareStop();
-        break;
-        case MOTOR_FRONT_ID: 
-           TC3_CompareStop();
-        break;
-        case MOTOR_BACK_ID: 
-            TC4_CompareStop();
-
-        break;
-        case MOTOR_TRAP_ID: 
-            TC5_CompareStop();
-        break;
-        case MOTOR_MIRROR_ID: 
-            TCC0_CompareStop();
-        break;
-        case MOTOR_FILTER_ID: 
-            TCC1_CompareStop();
-        break;
-    }
-}
-
-void setRampPeriod(_MOTOR_ID_t motid, uint16_t final, uint16_t ramp){
-    uint16_t current_period;
     
-    switch(motid){
-        case MOTOR_LEFT_ID: 
-            current_period = TC1_Compare16bitPeriodGet();
-            if(current_period > final){
-                TC1_CompareStop();    
-                TC1_Compare16bitPeriodSet(current_period - ramp);
-                TC1_CompareStart();
-            }
-        break;
-        case MOTOR_RIGHT_ID: 
-            current_period = TC2_Compare16bitPeriodGet();
-            if(current_period > final){
-                TC2_CompareStop();    
-                TC2_Compare16bitPeriodSet(current_period - ramp);
-                TC2_CompareStart();
-            }
-            
-        break;
-        case MOTOR_FRONT_ID: 
-            current_period = TC3_Compare16bitPeriodGet();
-            if(current_period > final){
-                TC3_CompareStop();    
-                TC3_Compare16bitPeriodSet(current_period - ramp);
-                TC3_CompareStart();
-            }
-
-            
-        break;
-        case MOTOR_BACK_ID: 
-            current_period = TC4_Compare16bitPeriodGet();
-            if(current_period > final){
-                TC4_CompareStop();    
-                TC4_Compare16bitPeriodSet(current_period - ramp);
-                TC4_CompareStart();
-            }
-
-        break;
-        case MOTOR_TRAP_ID: 
-            current_period = TC5_Compare16bitPeriodGet();
-            if(current_period > final){
-                TC5_CompareStop();    
-                TC5_Compare16bitPeriodSet(current_period - ramp);
-                TC5_CompareStart();
-            }
-
-        break;
-        case MOTOR_MIRROR_ID: 
-            current_period = TCC0_Compare24bitPeriodGet();
-            if(current_period > final){
-                TCC0_CompareStop();    
-                TCC0_Compare24bitPeriodSet(current_period - ramp);
-                TCC0_CompareStart();
-            }
-
-        break;
-        case MOTOR_FILTER_ID: 
-            current_period = TCC1_Compare24bitPeriodGet();
-            if(current_period > final){
-                TCC1_CompareStop();    
-                TCC1_Compare24bitPeriodSet(current_period - ramp);
-                TCC1_CompareStart();
-            }
-
-        break;
-    }
+    return mot->opto_status;
 }
 
-bool selectFormat2D(unsigned short left, unsigned short right, unsigned short front, unsigned short back, unsigned short trap){
+void motorStep(MOTOR_STRUCT_t* mot, bool stat){
+    mot->step_polarity = stat;
     
-    // Verify if a command is executing
-    if(leftMotor.command_activated) return false;
-    if(rightMotor.command_activated) return false;
-    if(frontMotor.command_activated) return false;
-    if(backMotor.command_activated) return false;
-    if(trapMotor.command_activated) return false;
-    
- 
-    activateBackCollimation(back);
-    activateFrontCollimation(front);
-    activateLeftCollimation(left);
-    activateRightCollimation(right);
-    activateTrapCollimation(trap);
+    if(stat){
+        mot->steps++;
+        switch(mot->id){
+            case MOTOR_LEFT_ID: uC_STEP_LEFT_Set();return;
+            case MOTOR_RIGHT_ID: uC_STEP_RIGHT_Set();return;
+            case MOTOR_FRONT_ID: uC_STEP_FRONT_Set();return;
+            case MOTOR_BACK_ID: uC_STEP_BACK_Set();return;
+            case MOTOR_TRAP_ID: uC_STEP_TRAP_Set();return;
+            case MOTOR_MIRROR_ID: uC_STEP_MIRROR_Set();return;
+            case MOTOR_FILTER_ID: uC_STEP_FILTER_Set();return;
+        }
         
-    return true;
+    }else{
+        switch(mot->id){
+            case MOTOR_LEFT_ID: uC_STEP_LEFT_Clear();return;
+            case MOTOR_RIGHT_ID: uC_STEP_RIGHT_Clear();return;
+            case MOTOR_FRONT_ID: uC_STEP_FRONT_Clear();return;
+            case MOTOR_BACK_ID: uC_STEP_BACK_Clear();return;
+            case MOTOR_TRAP_ID: uC_STEP_TRAP_Clear();return;
+            case MOTOR_MIRROR_ID: uC_STEP_MIRROR_Clear();return;
+            case MOTOR_FILTER_ID: uC_STEP_FILTER_Clear();return;
+        }
+    }
+    
+    return ;
 }
 
-bool motorsIsRunning(void){
-    return ( (leftMotor.command_activated) || (rightMotor.command_activated) ||(backMotor.command_activated) ||(frontMotor.command_activated)||(trapMotor.command_activated));
+bool isLatched(MOTOR_STRUCT_t* mot){
+    return !motor_latch_request[mot->id];
 }
-
-ext bool motorsIsError(void){
-    if(motorsIsRunning()) return false;
-    return ( (!leftMotor.position_valid) || (!rightMotor.position_valid) ||(!backMotor.position_valid) ||(!frontMotor.position_valid)||(!trapMotor.position_valid));
-}
-
-bool leftIsError(void){
-    return (!leftMotor.position_valid);
-}
-
-bool rightIsError(void){
-    return (!rightMotor.position_valid);
-}
-
-
-bool frontIsError(void){
-    return (!frontMotor.position_valid);
-}
-
-bool backIsError(void){
-    return (!backMotor.position_valid);
-}
-
-bool trapIsError(void){
-    return (!trapMotor.position_valid);
-}
-

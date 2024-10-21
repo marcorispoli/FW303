@@ -7,11 +7,7 @@
 #include "application.h"
 #include "Protocol/protocol.h"
 #include "Motors/motlib.h"
-#include "Motors/mot_back.h"
-#include "Motors/mot_front.h"
-#include "Motors/mot_left.h"
-#include "Motors/mot_right.h"
-#include "Motors/mot_trap.h"
+#include "Motors/format_collimation.h"
 
  /** 
      * \defgroup appMainModule  Main Module 
@@ -69,11 +65,7 @@ int main ( void )
     
     // Initializes the motors with the common routines
     motorLibInitialize();   
-    motorBackInit();
-    motorFrontInit();
-    motorLeftInit();
-    motorRightInit();
-    motorTrapInit();
+    formatInit();
     
     while ( true )
     {
