@@ -82,7 +82,7 @@ void TC3_CompareInitialize( void )
     }
 
     /* Configure counter mode & prescaler */
-    TC3_REGS->COUNT16.TC_CTRLA = TC_CTRLA_MODE_COUNT16 | TC_CTRLA_PRESCALER_DIV1 | TC_CTRLA_PRESCSYNC_PRESC ;
+    TC3_REGS->COUNT16.TC_CTRLA = TC_CTRLA_MODE_COUNT16 | TC_CTRLA_PRESCALER_DIV16 | TC_CTRLA_PRESCSYNC_PRESC ;
 
     /* Configure waveform generation mode */
     TC3_REGS->COUNT16.TC_WAVE = (uint8_t)TC_WAVE_WAVEGEN_MFRQ;
@@ -125,7 +125,7 @@ void TC3_CompareStop( void )
 
 uint32_t TC3_CompareFrequencyGet( void )
 {
-    return (uint32_t)(48000000UL);
+    return (uint32_t)(3000000UL);
 }
 
 void TC3_CompareCommandSet(TC_COMMAND command)

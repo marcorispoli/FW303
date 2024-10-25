@@ -2,15 +2,15 @@
 
 manifest_file_version: 1.0.0
 project: FW303
-creation_date: 2024-10-21T23:20:20.701+02:00[Europe/Berlin]
+creation_date: 2024-10-25T17:11:52.494+02:00[Europe/Berlin]
 operating_system: Windows 10
 mcc_mode: IDE
-mcc_mode_version: v6.05
+mcc_mode_version: v6.20
 device_name: ATSAME51J20A
 compiler: XC32 4.45
-mcc_version: 5.4.1
-mcc_core_version: 5.6.1
-content_manager_version: 4.3.2
+mcc_version: 5.5.0
+mcc_core_version: 5.7.0
+content_manager_version: 5.0.1
 is_mcc_offline: false
 is_using_prerelease_versions: false
 mcc_content_registries: https://registry.npmjs.org/

@@ -145,14 +145,6 @@ void SYS_Initialize ( void* data )
 
     TC2_CompareInitialize();
 
-    TC5_CompareInitialize();
-
-    TC4_CompareInitialize();
-
-    TCC1_CompareInitialize();
-
-    TCC0_CompareInitialize();
-
 
 
 
