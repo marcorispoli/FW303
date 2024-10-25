@@ -117,7 +117,12 @@ void ApplicationProtocolCommandHandler(uint8_t cmd, uint8_t d0,uint8_t d1,uint8_
                     break;
             }
             
+        case CMD_SET_LIGHT:
+            if(d0) lightActivation(true);
+            else lightActivation(false);
+            MET_Can_Protocol_returnCommandExecuted(d0,0);
             break;
+            
         default:
             MET_Can_Protocol_returnCommandError(MET_CAN_COMMAND_NOT_AVAILABLE);
     }

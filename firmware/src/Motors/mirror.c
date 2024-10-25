@@ -26,6 +26,7 @@ static int  target_index = -1;
 static void mirrorCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Timer Callback for the format collimation
 static void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init);
 
+static LIGHT_STRUCT_t lightStruct;
 
 /**
  * Mirror Initialization function.
@@ -40,7 +41,7 @@ void mirrorInit(void){
     // Updates the Status register
     SystemStatusRegister.format_mirror_activity = FORMAT_UNDEFINED;
     SystemStatusRegister.in_field_position  = 1;
-    encodeStatusRegister(&SystemStatusRegister);
+    
     
     // TC3 Setup
     TC3_CompareCallbackRegister(mirrorCallback, 0);// Registers the working callback to the TC3 timer
@@ -61,6 +62,14 @@ void mirrorInit(void){
     
     // Disables the filter motor
     motorDisable(&mirrorMotorStruct);
+    
+    // Light initialization 
+    lightStruct.status = false;
+    lightStruct.timer = 0;
+    SystemStatusRegister.collimation_light = 0;
+    uC_LED_ON_Set();
+    
+    encodeStatusRegister(&SystemStatusRegister);
     return;
 }
 
@@ -253,4 +262,41 @@ void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
     return ;
 
    
+}
+
+
+void light1sLoop(void){
+    if(!lightStruct.status) return;    
+
+    if(lightStruct.timer){ 
+        lightStruct.timer--;
+        if(!lightStruct.timer){
+            lightStruct.status = false;
+            uC_LED_ON_Set();
+            SystemStatusRegister.collimation_light = 0;
+            encodeStatusRegister(&SystemStatusRegister);
+            return;   
+        }
+    }
+    return;
+
+}
+
+void lightActivation(bool status){
+    
+    if(status){
+        lightStruct.timer = 20;
+        uC_LED_ON_Clear();
+        lightStruct.status = true;
+        SystemStatusRegister.collimation_light = 1;
+        encodeStatusRegister(&SystemStatusRegister);
+        return;        
+    }
+    
+    lightStruct.status = false;
+    uC_LED_ON_Set();
+    lightStruct.timer = 0;
+    SystemStatusRegister.collimation_light = 0;
+    encodeStatusRegister(&SystemStatusRegister);
+    return;        
 }

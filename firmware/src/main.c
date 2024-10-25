@@ -72,7 +72,7 @@ int main ( void )
                
         if(trigger_time & _1024_ms_TriggerTime){
             trigger_time &=~ _1024_ms_TriggerTime;            
-            
+            light1sLoop();
             VITALITY_LED_Toggle(); 
                         
         }        
