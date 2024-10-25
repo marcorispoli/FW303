@@ -251,13 +251,19 @@
           <itemPath>../src/config/default/libc_syscalls.c</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="f2" displayName="MOTORS" projectFiles="true">
+        <itemPath>../src/Motors/motlib.c</itemPath>
+        <itemPath>../src/Motors/motlib.h</itemPath>
+        <itemPath>../src/Motors/format_collimation.c</itemPath>
+        <itemPath>../src/Motors/format_collimation.h</itemPath>
+        <itemPath>../src/Motors/filter.c</itemPath>
+        <itemPath>../src/Motors/filter.h</itemPath>
+        <itemPath>../src/Motors/mirror.c</itemPath>
+        <itemPath>../src/Motors/mirror.h</itemPath>
+      </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/application.h</itemPath>
       <itemPath>../src/license.h</itemPath>
-      <itemPath>../src/Motors/motlib.c</itemPath>
-      <itemPath>../src/Motors/motlib.h</itemPath>
-      <itemPath>../src/Motors/format_collimation.c</itemPath>
-      <itemPath>../src/Motors/format_collimation.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

@@ -8,6 +8,8 @@
 #include "Protocol/protocol.h"
 #include "Motors/motlib.h"
 #include "Motors/format_collimation.h"
+#include "Motors/filter.h"
+#include "Motors/mirror.h"
 
  /** 
      * \defgroup appMainModule  Main Module 
@@ -54,18 +56,11 @@ int main ( void )
     // Application Protocol initialization
     ApplicationProtocolInit();
     
-    // ADC Initialization
-    //ADC0_Enable();
-    //ADC0_ConversionStart();
-    //ADC1_Enable();    
-    //ADC1_ConversionStart();    
-    // ADC conversion functions
-    // ADC0_ConversionResultGet()
-    // ADC1_ConversionResultGet()
-    
     // Initializes the motors with the common routines
     motorLibInitialize();   
     formatInit();
+    filterInit();
+    mirrorInit();
     
     while ( true )
     {

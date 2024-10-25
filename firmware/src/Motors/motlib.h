@@ -15,33 +15,6 @@
     #define ext_static extern
 #endif
 
-/*!
- * \defgroup motorModule Motor Common Routines module
- *
- * \ingroup applicationModule
- * 
- * 
- * This Module implements the common routines used to 
- * drive the Stepper motors in the application.
- * 
- * # Dependencies
- * 
- * ## TC0 Peripheral timer setting
- * 
- * This module requires to set the TC0 peripheral timer to operate 
- * in one shot mode with 1us of overflow interrupt. 
- * 
- *  @{
- * 
- */
-
-    /**
-     * \defgroup moduleConstants Constants module definition
-     * 
-     * This section describes the module constants
-     * 
-     *  @{
-     */
         /// This enumeration type defines the Motor Current Limit levels
         typedef enum{
             MOT_TORQUE_HIGH = 0,  //!< Motor High torque mode:  Vref =  1.52V
@@ -104,15 +77,6 @@
             LAST_MOTOR_ID = MOTOR_MIRROR_ID    
         }_MOTOR_ID_t;
 
-     /// @}   moduleConstants
-
-     /**
-     * \defgroup moduleStructures Module Data and Structure definition
-     * 
-     * This section describes the module structures
-     * 
-     *  @{
-     */
 
         /// This structure defines the Motor data BUS that will be latched
         typedef struct{
@@ -124,12 +88,21 @@
             unsigned char ENASTEP:1;//!< Motor Enable Step output
         }_MOTOR_DATA_t;
      
+        /// This is the enumeration of motor activation return codes
+        typedef enum{
+            MOT_RET_IN_TARGET =0, //!< Thecommand is already in the requested target position
+            MOT_RET_STARTED = 1,  //!< The command is started;
+            MOT_RET_ERR_BUSY = 2,//!< A command is already running;
+            MOT_RET_ERR_INVALID_TARGET = 3,//!< An invalid target has been requested                     
+        }_MOTOR_COMMAND_RETURN_t;
+     
+        
         /// Module data structure
         typedef struct{
             
             int id;     //!< Motor Id 
-            int steps;  //!< Number of steps executed in the current positioning
-            int target_steps;   //!< This is the target position
+            unsigned short steps;  //!< Number of steps executed in the current positioning
+            unsigned short target_steps;   //!< This is the target position
             bool step_polarity;//!< This is the status of the STEP output pin
 
             // Ramp implementation
@@ -161,17 +134,6 @@
         ext MOTOR_STRUCT_t mirrorMotorStruct;
         ext MOTOR_STRUCT_t filterMotorStruct;
 
-     /// @}   moduleStructures  
-
-
-     /**
-     * \defgroup publicModuleApi Public API Module definition
-     * 
-     * This section describes the API of the module
-     * 
-     *  @{
-     */
-        
         ext void motorLibInitialize(void); //!< Module initialization function        
         ext void manageMotorLatch(void);
         
@@ -183,10 +145,4 @@
         ext bool optoGet(MOTOR_STRUCT_t* mot);
         
         
-        /// @}   publicModuleApi 
-
-
-
-/** @}*/ // motorModule
-
 #endif // _MOTLIB_H

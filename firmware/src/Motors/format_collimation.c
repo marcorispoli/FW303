@@ -49,6 +49,11 @@ void formatInit(void){
     current_index = -1;
     target_index = -1;
     
+    // Updates the Status register
+    SystemStatusRegister.format_2d_activity = FORMAT_UNDEFINED;
+    SystemStatusRegister.format_selected_index = 0;
+    encodeStatusRegister(&SystemStatusRegister);
+    
 
     // TC1 Setup
     TC1_CompareCallbackRegister(formatCallback, 0);// Registers the working callback to the TC1 timer
@@ -114,24 +119,29 @@ void formatInit(void){
 }
 
 
-bool activateFormatCollimation(int index){
+_MOTOR_COMMAND_RETURN_t activateFormatCollimation(int index){
+    
+    // The current index is equal to the requested index
+    if(current_index == index) return MOT_RET_IN_TARGET;
     
     // A command is executing
-    if(command_activated) return false;    
-    if(index < 0) return false;    
-    if(index >= MAX_FORMAT_INDEX) return false;
+    if(command_activated) return MOT_RET_ERR_BUSY;    
+    if(index < 0) return MOT_RET_ERR_INVALID_TARGET;    
+    if(index >= MAX_FORMAT_INDEX) return MOT_RET_ERR_INVALID_TARGET;
+    
+    // Upload the target position to the motors
+    if(!protocolGet2DFormat(index, &leftMotorStruct.target_steps, &rightMotorStruct.target_steps, &frontMotorStruct.target_steps, &backMotorStruct.target_steps, &trapMotorStruct.target_steps)) return MOT_RET_ERR_INVALID_TARGET;
     
     // Init command flag
     command_activated = true;
     current_index = -1;
     target_index = index;
     
-    // Upload the target position to the motors
-    leftMotorStruct.target_steps = protocolGetFormatLeft(index);
-    rightMotorStruct.target_steps = protocolGetFormatRight(index);
-    backMotorStruct.target_steps = protocolGetFormatBack(index);
-    frontMotorStruct.target_steps = protocolGetFormatFront(index);
-    trapMotorStruct.target_steps = protocolGetFormatTrap(index);
+    // Updates the Status register
+    SystemStatusRegister.format_2d_activity = FORMAT_EXECUTING;
+    SystemStatusRegister.format_selected_index = target_index;
+    encodeStatusRegister(&SystemStatusRegister);
+    
     
     // Initializes the position procedures
     motorPositioning(&leftMotorStruct, true);
@@ -142,7 +152,7 @@ bool activateFormatCollimation(int index){
        
     // Start the timer
     TC1_CompareStart();
-    return true;
+    return MOT_RET_STARTED;
 }
 
 
@@ -178,9 +188,23 @@ void formatCallback(TC_COMPARE_STATUS status, uintptr_t context){
         current_index = -1;
         target_index = -1;
         
+        // Updates the Status register
+        SystemStatusRegister.format_2d_activity = FORMAT_UNDEFINED;
+        SystemStatusRegister.format_selected_index = 0;
+        encodeStatusRegister(&SystemStatusRegister);
+
+        MET_Can_Protocol_returnCommandError(ERROR_IN_FORMAT_POSITIONING);
+        
     }else{
         // Command terminated successfully
         current_index = target_index;
+        
+        // Updates the Status register
+        SystemStatusRegister.format_2d_activity = FORMAT_SELECTED;
+        SystemStatusRegister.format_selected_index = current_index;
+        encodeStatusRegister(&SystemStatusRegister);
+
+        MET_Can_Protocol_returnCommandExecuted(current_index,0);
     }
     
     command_activated = false;
