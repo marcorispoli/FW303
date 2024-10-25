@@ -15,6 +15,78 @@
     #define ext_static extern
 #endif
 
+/*!
+ * \defgroup MOTORS Motor Management Module
+ * \ingroup libraryModules
+ * 
+ * This Module implements the basic routines to get access to the 
+ * motor drivers.
+ * 
+ * ## OVERVIEW
+ * 
+ * The Collimator device handles up to seven stepper motors 
+ * in order to control:
+ * + The collimation format:
+ *  + The Right blade motor driver;
+ *  + The Left blade motor driver;
+ *  + The Front blade motor driver;
+ *  + The Back blade motor driver;
+ *  + The Trap blade motor driver;
+ * + The mirror positioning;
+ * + The filter selection;
+ * 
+ * \Warning Not all the motors can be activated at the same time:
+ * actually the board is dimensioned to handle 5 motor activated at the same time.
+ * 
+ * Each of the motor driver share the same schematics
+ * and most of the digital lines that control the motor drivers 
+ * are shared in a parallel bus.
+ * 
+ * This library module provides the data structure and the 
+ * helper function that allow to control every single driver.
+ * 
+ * In particolar:
+ * + the module handles the Mux lines and the necessary timing 
+ * to get access to the driver BUS;
+ * + provides the data structure to handle the motor implementation;
+ * + provides an interface to set the motor driver:
+ *   + set the torque limitation;
+ *   + enable disable the driver;
+ *   + set the microstepping mode;
+ *   + set the rotation direction;
+ * 
+ * 
+ * ## Dependencies
+ * 
+ * 
+ * 
+ * 
+ * ## Driver Control Digital Bus
+ * 
+ * The board makes use of octal digital buffers in order to share 
+ * the common microcontroller lines. 
+ * 
+ * ### Current Limitation
+ * 
+ * The board makes use of two digital lines to set the  
+ * voltage reference that controls the limitation current level
+ * on the motor driver.
+ * 
+ * |uC_IA|uC_IB|Torque|Driver Voltage reference|
+ * |:--|:--|:--|:--|
+ * |0|0|HIGH TORQUE|1.52V|
+ * |0|1|LOW TORQUE|0.28V|
+ * |1|0|MED TORQUE|1.39V|
+ * |1|1|NO TORQUE|0V|
+ * 
+ * 
+ *  
+ * 
+ * The module control the driver current limitation through two digital
+ * lines of the control BUS 
+ * 
+ */
+
         /// This enumeration type defines the Motor Current Limit levels
         typedef enum{
             MOT_TORQUE_HIGH = 0,  //!< Motor High torque mode:  Vref =  1.52V

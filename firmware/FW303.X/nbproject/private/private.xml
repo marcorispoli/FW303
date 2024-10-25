@@ -2,6 +2,16 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/format_collimation.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/motlib.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/main.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Protocol/protocol.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mirror.c</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/motlib.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Motors/mirror.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/application.h</file>
+            <file>file:/C:/Users/marco/Documents/Data/Progetti-GIT/FW/fw_pcb303/firmware/src/Protocol/protocol.h</file>
+        </group>
     </open-files>
 </project-private>
