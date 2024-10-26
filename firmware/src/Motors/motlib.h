@@ -181,6 +181,7 @@
             int period; //!< The current pwm period
             int time_count;    //!< Timer implemening the pwm
             int init_period; //!< This is the innitial period for the ramp            
+            int ramp_rate; //!< decrement rate
             int run_period;    //!< Minimum period (speed)
             
             MOT_DIRECTION_t direction_home; //!< This is the setup direction for home
@@ -189,7 +190,7 @@
             
             int     command_error;   //!< error code if > 0
             bool    command_running; //!< true if the positioning is not completed
-            uint8_t command_sequence;//!< This is the execution sequence index
+            int command_sequence;//!< This is the execution sequence index
             
             bool opto_status; //!< This is the last read  status of the zero photocell 
             
@@ -216,6 +217,12 @@
         ext void motorStep(MOTOR_STRUCT_t* mot, bool stat);        
         ext bool optoGet(MOTOR_STRUCT_t* mot);
         
+        ext void activationInitialize(MOTOR_STRUCT_t* pMotor, bool start_tc);
+        
+        ext void abortActivation(void);
+        ext _MOTOR_COMMAND_RETURN_t activateMotor(unsigned short steps, MOTOR_STRUCT_t* pMotor);
+  
+    
         ext void motorTestActivation(unsigned char test_case);
         ext void motorLeftTestStop(void);
 #endif // _MOTLIB_H

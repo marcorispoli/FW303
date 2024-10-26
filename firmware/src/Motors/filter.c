@@ -9,13 +9,15 @@
 #define TC2_BASE_CLOCK 3000000  // TC2 module clock source (verify in the MCC configuration))
 #define TC2_FREQ 96000          // TC2 scaled period
 
-#define STEPs_TO_PERIOD(speed,mode) (( (TC2_FREQ / (MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
+#define STEPs_TO_PERIOD(speed,mode) (( ( TC2_FREQ / ( 2 * MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
 #define TIME_ms_TO_RAMP(ms) (ms * TC2_FREQ/ 2000) // Converts ms acceleration in ramp period
 
 // Defines the motor performances
-#define FILTER_STEPPING_MODE MOT_uSTEP_16
-#define SPEED_FILTER_STEP_PER_SEC 300
-#define RAMP_FILTER_ms_TIME 500
+#define FILTER_STEPPING_MODE MOT_uSTEP_4
+#define SPEED_FILTER_STEP_PER_SEC 800
+#define INIT_SPEED_FILTER_STEP_PER_SEC 50
+#define FILTER_RAMP_RATE 20
+
 #define FILTER_DIRECTION_HOME MOT_DIRCW
 #define FILTER_DIRECTION_FIELD MOT_DIRCCW
 
@@ -25,7 +27,7 @@ static int  target_index = -1;
 
 
 static void filterCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Timer Callback for the format collimation
-static void filterPositioning(MOTOR_STRUCT_t* pMotor, bool init);
+static void filterPositioning(MOTOR_STRUCT_t* pMotor);
 
 
 /**
@@ -51,7 +53,9 @@ void filterInit(void){
     
     // Sets the Motor performances
     filterMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_FILTER_STEP_PER_SEC, FILTER_STEPPING_MODE);
-    filterMotorStruct.init_period = filterMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_FILTER_ms_TIME);
+    filterMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_FILTER_STEP_PER_SEC, FILTER_STEPPING_MODE);
+    filterMotorStruct.ramp_rate = (filterMotorStruct.init_period - filterMotorStruct.run_period)/FILTER_RAMP_RATE + 1;   
+    
     filterMotorStruct.direction_home = FILTER_DIRECTION_HOME;
     filterMotorStruct.direction_field = FILTER_DIRECTION_FIELD;
     filterMotorStruct.stepping_mode = FILTER_STEPPING_MODE;
@@ -90,10 +94,7 @@ _MOTOR_COMMAND_RETURN_t activateFilter(int index){
     encodeStatusRegister(&SystemStatusRegister);
      
     // Initializes the position procedures
-    filterPositioning(&filterMotorStruct, true);
-       
-    // Start the timer
-    TC2_CompareStart();
+    activationInitialize(&filterMotorStruct, true);
     return MOT_RET_STARTED;
 }
 
@@ -106,7 +107,7 @@ _MOTOR_COMMAND_RETURN_t activateFilter(int index){
  */
 void filterCallback(TC_COMPARE_STATUS status, uintptr_t context){
    
-    filterPositioning(&filterMotorStruct, false);   
+    filterPositioning(&filterMotorStruct);   
    
     if(filterMotorStruct.command_running) return;
     TC2_CompareStop(); 
@@ -142,32 +143,98 @@ void filterCallback(TC_COMPARE_STATUS status, uintptr_t context){
 
 
 
-void filterPositioning(MOTOR_STRUCT_t* pMotor, bool init){   
+void filterPositioning(MOTOR_STRUCT_t* pMotor){  
+    
+   // Returns if not running (already terminated the positioning or not used)
+    if(!pMotor->command_running) return;
    
-    // Initialize the sequence
-    if(init){
+   // The falling edge of the step is not counted
+   if(pMotor->step_polarity) {
+       motorStep(pMotor, false);
+       return ;
+   }
 
-        // Initializes the ramp
-        pMotor->time_count = 0; 
-        pMotor->period = pMotor->init_period;
-
-        if(optoGet(pMotor)) pMotor->command_sequence = 2; // Already in zero position
-        else{
-            pMotor->command_sequence = 1;
-            motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );          
-        }      
-
-        pMotor->command_running = true;
-        pMotor->command_error = 0;
+    // Ramp/Speed handling: if the scheduled time is not expired no action will be taken
+    if(pMotor->time_count >= pMotor->period){
+       pMotor->time_count = 0; 
+       pMotor->period-=pMotor->ramp_rate;
+       if(pMotor->period <= pMotor->run_period) pMotor->period = pMotor->run_period;
+    }else{ 
+        pMotor->time_count++;
         return ;
     }
    
-    // Command successfully completed
+   switch(pMotor->command_sequence){
+       
+       case 1: // PHotocell not yet intercepted
+            if(!isLatched(pMotor)) return ;
+
+            // Photocell trigger
+            if(optoGet(pMotor)){                
+                pMotor->command_sequence++;
+                return ;
+            }
+           
+            // Steps
+            motorStep(pMotor, true);
+           
+            // Handling a timeout here  
+            return ;
+           
+       case 2: // Continue until photocell is released           
+            pMotor->steps = 0; // Reset the steps to be counted for the target            
+            pMotor->command_sequence++;
+            return ;
+       
+       case 3: // Waits to exit from the photocell
+            if(!isLatched(pMotor)) return ;
+            
+            if(!optoGet(pMotor)){
+                pMotor->command_sequence++;
+                pMotor->steps = 0;
+                return ;
+            }
+            
+            // Steps
+            motorStep(pMotor, true);
+            
+            // Handle a timeout here
+            
+            return ;
+            
+       case 4: // Steps to the requested target
+            
+            // Command successfully completed
+            if(pMotor->steps >= pMotor->target_steps){
+                pMotor->command_sequence++;
+                return ;
+            }
+            
+            // Steps
+            motorStep(pMotor, true);
+            
+            
+           // Handles a timeout here
+
+            return ;
+       default:
+           pMotor->command_sequence++;
+           
+           // Keeps the torque to dissipate the rotating energy inertia
+           if(pMotor->command_sequence > 500){
+                motorDisable(pMotor);
+                pMotor->command_error = 0;
+                pMotor->command_running = false;
+                pMotor->command_sequence = 0;
+           }
+           return;
+   }
+   
+   // Invalid condition
     motorDisable(pMotor);
-    pMotor->command_error = 0;
+    pMotor->command_error = 1;
     pMotor->command_running = false;
     pMotor->command_sequence = 0;
     return ;
-
    
 }

@@ -9,26 +9,29 @@
 #define TC1_BASE_CLOCK 3000000  // TC1 module clock source (verify in the MCC configuration))
 #define TC1_FREQ 96000          // TC1 scaled period
 
-#define STEPs_TO_PERIOD(speed,mode) (( (TC1_FREQ / (MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
+#define STEPs_TO_PERIOD(speed,mode) (( ( TC1_FREQ / ( 2 * MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
 #define TIME_ms_TO_RAMP(ms) (ms * TC1_FREQ/ 2000) // Converts ms acceleration in ramp period
 
 // Defines the motor performances
 #define LR_STEPPING_MODE MOT_uSTEP_16
-#define SPEED_LR_STEP_PER_SEC 300
-#define RAMP_LR_ms_TIME 500
+#define SPEED_LR_STEP_PER_SEC 1000
+#define INIT_SPEED_LR_STEP_PER_SEC 50
+#define LR_RAMP_RATE 10
 
 #define FRONT_STEPPING_MODE MOT_uSTEP_16
-#define SPEED_FRONT_STEP_PER_SEC 300
-#define RAMP_FRONT_ms_TIME 500
+#define SPEED_FRONT_STEP_PER_SEC 1000
+#define INIT_SPEED_FRONT_STEP_PER_SEC 50
+#define FRONT_RAMP_RATE 10
 
 #define BACK_STEPPING_MODE MOT_uSTEP_16
-#define SPEED_BACK_STEP_PER_SEC 300
-#define RAMP_BACK_ms_TIME 500
+#define SPEED_BACK_STEP_PER_SEC 1000
+#define INIT_SPEED_BACK_STEP_PER_SEC 50
+#define BACK_RAMP_RATE 10
 
 #define TRAP_STEPPING_MODE MOT_uSTEP_16
 #define SPEED_TRAP_STEP_PER_SEC 300
-#define RAMP_TRAP_ms_TIME 500
-
+#define INIT_SPEED_TRAP_STEP_PER_SEC 50
+#define TRAP_RAMP_RATE 10
 
 static bool command_activated = false;
 static int  current_index = -1;
@@ -36,7 +39,7 @@ static int  target_index = -1;
 
 
 static void formatCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Timer Callback for the format collimation
-static void motorPositioning(MOTOR_STRUCT_t* pMotor, bool init);
+static void motorPositioning(MOTOR_STRUCT_t* pMotor);
 
 
 /**
@@ -63,7 +66,8 @@ void formatInit(void){
     
     // Sets the Motor performances
     leftMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
-    leftMotorStruct.init_period = leftMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_LR_ms_TIME);
+    leftMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
+    leftMotorStruct.ramp_rate = (leftMotorStruct.init_period - leftMotorStruct.run_period)/LR_RAMP_RATE + 1;
     leftMotorStruct.direction_home = MOT_DIRCW;
     leftMotorStruct.direction_field = MOT_DIRCCW;
     leftMotorStruct.stepping_mode = LR_STEPPING_MODE;
@@ -73,7 +77,8 @@ void formatInit(void){
     leftMotorStruct.command_sequence = 0;
        
     rightMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
-    rightMotorStruct.init_period = rightMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_LR_ms_TIME);
+    rightMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
+    rightMotorStruct.ramp_rate = (rightMotorStruct.init_period - rightMotorStruct.run_period)/LR_RAMP_RATE + 1;
     rightMotorStruct.direction_home = MOT_DIRCW;
     rightMotorStruct.direction_field = MOT_DIRCCW;
     rightMotorStruct.stepping_mode = LR_STEPPING_MODE;
@@ -82,7 +87,8 @@ void formatInit(void){
     rightMotorStruct.command_sequence = 0;
     
     backMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_BACK_STEP_PER_SEC, BACK_STEPPING_MODE);
-    backMotorStruct.init_period = backMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_BACK_ms_TIME);
+    backMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_BACK_STEP_PER_SEC, BACK_STEPPING_MODE);
+    backMotorStruct.ramp_rate = (backMotorStruct.init_period - backMotorStruct.run_period)/BACK_RAMP_RATE + 1;
     backMotorStruct.direction_home = MOT_DIRCCW;
     backMotorStruct.direction_field = MOT_DIRCW;
     backMotorStruct.stepping_mode = BACK_STEPPING_MODE;
@@ -91,16 +97,18 @@ void formatInit(void){
     backMotorStruct.command_sequence = 0;
     
     frontMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_FRONT_STEP_PER_SEC, FRONT_STEPPING_MODE);
-    frontMotorStruct.init_period = frontMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_FRONT_ms_TIME);
-    frontMotorStruct.direction_home = MOT_DIRCCW;
-    frontMotorStruct.direction_field = MOT_DIRCW;
+    frontMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_FRONT_STEP_PER_SEC, FRONT_STEPPING_MODE);
+    frontMotorStruct.ramp_rate = (frontMotorStruct.init_period - frontMotorStruct.run_period)/FRONT_RAMP_RATE + 1;
+    frontMotorStruct.direction_home = MOT_DIRCW;
+    frontMotorStruct.direction_field = MOT_DIRCCW;
     frontMotorStruct.stepping_mode = FRONT_STEPPING_MODE;
     frontMotorStruct.command_running = false;
     frontMotorStruct.command_error = 0;
     frontMotorStruct.command_sequence = 0;
     
     trapMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_TRAP_STEP_PER_SEC, TRAP_STEPPING_MODE);
-    trapMotorStruct.init_period = trapMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_TRAP_ms_TIME);
+    trapMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_TRAP_STEP_PER_SEC, TRAP_STEPPING_MODE);
+    trapMotorStruct.ramp_rate = (trapMotorStruct.init_period - trapMotorStruct.run_period)/TRAP_RAMP_RATE + 1;
     trapMotorStruct.direction_home = MOT_DIRCCW;
     trapMotorStruct.direction_field = MOT_DIRCW;
     trapMotorStruct.stepping_mode = TRAP_STEPPING_MODE;
@@ -141,17 +149,15 @@ _MOTOR_COMMAND_RETURN_t activateFormatCollimation(int index){
     SystemStatusRegister.format_2d_activity = FORMAT_EXECUTING;
     SystemStatusRegister.format_selected_index = target_index;
     encodeStatusRegister(&SystemStatusRegister);
-    
-    
+        
     // Initializes the position procedures
-    motorPositioning(&leftMotorStruct, true);
-    motorPositioning(&rightMotorStruct, true);
-    motorPositioning(&backMotorStruct, true);
-    motorPositioning(&frontMotorStruct, true);
-    motorPositioning(&trapMotorStruct, true);    
-       
-    // Start the timer
-    TC1_CompareStart();
+    activationInitialize(&leftMotorStruct, false);
+    activationInitialize(&rightMotorStruct, false);
+    activationInitialize(&backMotorStruct, false);
+    activationInitialize(&leftMotorStruct, false);
+    activationInitialize(&frontMotorStruct, true);
+    //activationInitialize(&trapMotorStruct, true);
+    
     return MOT_RET_STARTED;
 }
 
@@ -164,11 +170,12 @@ _MOTOR_COMMAND_RETURN_t activateFormatCollimation(int index){
  */
 void formatCallback(TC_COMPARE_STATUS status, uintptr_t context){
    
-    motorPositioning(&leftMotorStruct, false);   
-    motorPositioning(&rightMotorStruct, false);
-    motorPositioning(&backMotorStruct, false);
-    motorPositioning(&frontMotorStruct, false);
-    motorPositioning(&trapMotorStruct, false);
+    
+    motorPositioning(&leftMotorStruct);   
+    motorPositioning(&rightMotorStruct);
+    motorPositioning(&backMotorStruct);
+    motorPositioning(&frontMotorStruct);
+    motorPositioning(&trapMotorStruct);
     
     if(leftMotorStruct.command_running) return;
     if(rightMotorStruct.command_running) return;
@@ -213,25 +220,8 @@ void formatCallback(TC_COMPARE_STATUS status, uintptr_t context){
 
 
 
-void motorPositioning(MOTOR_STRUCT_t* pMotor, bool init){   
+void motorPositioning(MOTOR_STRUCT_t* pMotor){   
    
-    // Initialize the sequence
-    if(init){
-
-        // Initializes the ramp
-        pMotor->time_count = 0; 
-        pMotor->period = pMotor->init_period;
-
-        if(optoGet(pMotor)) pMotor->command_sequence = 2; // Already in zero position
-        else{
-            pMotor->command_sequence = 1;
-            motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );          
-        }      
-
-        pMotor->command_running = true;
-        pMotor->command_error = 0;
-        return ;
-    }
     
     // Returns if not running (already terminated the positioning or not used)
     if(!pMotor->command_running) return;
@@ -245,7 +235,7 @@ void motorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
     // Ramp/Speed handling: if the scheduled time is not expired no action will be taken
     if(pMotor->time_count >= pMotor->period){
        pMotor->time_count = 0; 
-       pMotor->period--;
+       pMotor->period-=pMotor->ramp_rate;
        if(pMotor->period <= pMotor->run_period) pMotor->period = pMotor->run_period;
     }else{ 
         pMotor->time_count++;
@@ -301,11 +291,8 @@ void motorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
             
             // Command successfully completed
             if(pMotor->steps >= pMotor->target_steps){
-                motorDisable(pMotor);
-                pMotor->command_error = 0;
-                pMotor->command_running = false;
-                pMotor->command_sequence = 0;
-                return ;
+                pMotor->command_sequence++;
+                return;
             }
             
             // Steps
@@ -315,7 +302,18 @@ void motorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
            // Handles a timeout here
 
             return ;
-                       
+           
+           default:
+                pMotor->command_sequence++;
+           
+                // Keeps the torque to dissipate the rotating energy inertia
+                if(pMotor->command_sequence > 500){
+                     motorDisable(pMotor);
+                     pMotor->command_error = 0;
+                     pMotor->command_running = false;
+                     pMotor->command_sequence = 0;
+                }
+                return;                       
    }
    
    // Invalid condition

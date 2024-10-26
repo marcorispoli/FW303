@@ -9,22 +9,24 @@
 #define TC3_BASE_CLOCK 3000000  // TC3 module clock source (verify in the MCC configuration))
 #define TC3_FREQ 96000          // TC3 scaled period
 
-#define STEPs_TO_PERIOD(speed,mode) (( (TC3_FREQ / (MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
+#define STEPs_TO_PERIOD(speed,mode) (( ( TC3_FREQ / ( 2 * MICROSTEP(mode)) )  / (speed)) - 1) // Converts Step/second to period pulses
 #define TIME_ms_TO_RAMP(ms) (ms * TC3_FREQ/ 2000) // Converts ms acceleration in ramp period
 
 // Defines the motor performances
 #define MIRROR_STEPPING_MODE MOT_uSTEP_16
-#define SPEED_MIRROR_STEP_PER_SEC 300
-#define RAMP_MIRROR_ms_TIME 500
-#define MIRROR_DIRECTION_HOME MOT_DIRCW
-#define MIRROR_DIRECTION_FIELD MOT_DIRCCW
+#define SPEED_MIRROR_STEP_PER_SEC 1000
+#define INIT_SPEED_MIRROR_STEP_PER_SEC 50
+#define MIRROR_RAMP_RATE 20
+
+#define MIRROR_DIRECTION_HOME MOT_DIRCCW
+#define MIRROR_DIRECTION_FIELD MOT_DIRCW
 
 static bool command_activated = false;
 static int  current_index = -1;
 static int  target_index = -1;
 
 static void mirrorCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Timer Callback for the format collimation
-static void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init);
+static void mirrorPositioning(MOTOR_STRUCT_t* pMotor);
 
 static LIGHT_STRUCT_t lightStruct;
 
@@ -50,8 +52,9 @@ void mirrorInit(void){
     
     
     // Sets the Motor performances
-    mirrorMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_MIRROR_STEP_PER_SEC, MIRROR_STEPPING_MODE);
-    mirrorMotorStruct.init_period = mirrorMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_MIRROR_ms_TIME);
+    mirrorMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_MIRROR_STEP_PER_SEC, MIRROR_STEPPING_MODE);    
+    mirrorMotorStruct.init_period = STEPs_TO_PERIOD(INIT_SPEED_MIRROR_STEP_PER_SEC, MIRROR_STEPPING_MODE);
+    mirrorMotorStruct.ramp_rate = (mirrorMotorStruct.init_period - mirrorMotorStruct.run_period)/MIRROR_RAMP_RATE + 1;    
     mirrorMotorStruct.direction_home = MIRROR_DIRECTION_HOME;
     mirrorMotorStruct.direction_field = MIRROR_DIRECTION_FIELD;
     mirrorMotorStruct.stepping_mode = MIRROR_STEPPING_MODE;
@@ -67,7 +70,7 @@ void mirrorInit(void){
     lightStruct.status = false;
     lightStruct.timer = 0;
     SystemStatusRegister.collimation_light = 0;
-    uC_LED_ON_Set();
+    uC_LED_ON_Clear();
     
     encodeStatusRegister(&SystemStatusRegister);
     return;
@@ -99,10 +102,7 @@ _MOTOR_COMMAND_RETURN_t activateMirror(int index){
     encodeStatusRegister(&SystemStatusRegister);
      
     // Initializes the position procedures
-    mirrorPositioning(&mirrorMotorStruct, true);
-       
-    // Start the timer
-    TC3_CompareStart();
+    activationInitialize(&mirrorMotorStruct, true);
     return MOT_RET_STARTED;
 }
 
@@ -114,7 +114,7 @@ _MOTOR_COMMAND_RETURN_t activateMirror(int index){
  */
 void mirrorCallback(TC_COMPARE_STATUS status, uintptr_t context){
    
-    mirrorPositioning(&mirrorMotorStruct, false);   
+    mirrorPositioning(&mirrorMotorStruct);   
    
     if(mirrorMotorStruct.command_running) return;
     TC3_CompareStop(); 
@@ -149,25 +149,8 @@ void mirrorCallback(TC_COMPARE_STATUS status, uintptr_t context){
 
 
 
-void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init){   
+void mirrorPositioning(MOTOR_STRUCT_t* pMotor){   
    
-     // Initialize the sequence
-    if(init){
-
-        // Initializes the ramp
-        pMotor->time_count = 0; 
-        pMotor->period = pMotor->init_period;
-
-        if(optoGet(pMotor)) pMotor->command_sequence = 2; // Already in zero position
-        else{
-            pMotor->command_sequence = 1;
-            motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );          
-        }      
-
-        pMotor->command_running = true;
-        pMotor->command_error = 0;
-        return ;
-    }
     
     // Returns if not running (already terminated the positioning or not used)
     if(!pMotor->command_running) return;
@@ -181,13 +164,13 @@ void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
     // Ramp/Speed handling: if the scheduled time is not expired no action will be taken
     if(pMotor->time_count >= pMotor->period){
        pMotor->time_count = 0; 
-       pMotor->period--;
+       pMotor->period-=pMotor->ramp_rate;
        if(pMotor->period <= pMotor->run_period) pMotor->period = pMotor->run_period;
     }else{ 
         pMotor->time_count++;
         return ;
     }
-
+    
    switch(pMotor->command_sequence){
        
        case 1:// Waits the Motor has been actually latched            
@@ -237,21 +220,29 @@ void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
             
             // Command successfully completed
             if(pMotor->steps >= pMotor->target_steps){
-                motorDisable(pMotor);
-                pMotor->command_error = 0;
-                pMotor->command_running = false;
-                pMotor->command_sequence = 0;
+                pMotor->command_sequence++;
                 return ;
             }
             
             // Steps
             motorStep(pMotor, true);
-            
-            
+                        
            // Handles a timeout here
 
             return ;
-                       
+        
+       default:
+            pMotor->command_sequence++;
+
+            // Keeps the torque to dissipate the rotating energy inertia
+            if(pMotor->command_sequence > 500){
+                 motorDisable(pMotor);
+                 pMotor->command_error = 0;
+                 pMotor->command_running = false;
+                 pMotor->command_sequence = 0;
+            }
+            return;      
+
    }
    
    // Invalid condition
@@ -265,6 +256,7 @@ void mirrorPositioning(MOTOR_STRUCT_t* pMotor, bool init){
 }
 
 
+
 void light1sLoop(void){
     if(!lightStruct.status) return;    
 
@@ -272,7 +264,8 @@ void light1sLoop(void){
         lightStruct.timer--;
         if(!lightStruct.timer){
             lightStruct.status = false;
-            uC_LED_ON_Set();
+            uC_LED_ON_Clear();
+            uC_TEST_LED_Clear();
             SystemStatusRegister.collimation_light = 0;
             encodeStatusRegister(&SystemStatusRegister);
             return;   
@@ -286,7 +279,8 @@ void lightActivation(bool status){
     
     if(status){
         lightStruct.timer = 20;
-        uC_LED_ON_Clear();
+        uC_LED_ON_Set();
+        uC_TEST_LED_Set();
         lightStruct.status = true;
         SystemStatusRegister.collimation_light = 1;
         encodeStatusRegister(&SystemStatusRegister);
@@ -294,7 +288,8 @@ void lightActivation(bool status){
     }
     
     lightStruct.status = false;
-    uC_LED_ON_Set();
+    uC_LED_ON_Clear();
+    uC_TEST_LED_Clear();
     lightStruct.timer = 0;
     SystemStatusRegister.collimation_light = 0;
     encodeStatusRegister(&SystemStatusRegister);

@@ -18,7 +18,7 @@
 
         ext void formatInit(void); //!< Module initialization function
         ext _MOTOR_COMMAND_RETURN_t activateFormatCollimation(int index);//!< format activation command to index 
-
-
+        ext _MOTOR_COMMAND_RETURN_t activateMotorCollimation(unsigned short steps, MOTOR_STRUCT_t* pMotor);
+        
 
 #endif // _MOT_FORMAT_H

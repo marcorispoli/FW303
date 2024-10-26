@@ -338,9 +338,90 @@ bool isLatched(MOTOR_STRUCT_t* mot){
     return !motor_latch_request[mot->id];
 }
 
+void activationInitialize(MOTOR_STRUCT_t* pMotor, bool start_tc){
+
+    // Initializes the ramp
+    pMotor->time_count = 0; 
+    pMotor->period = pMotor->init_period;
+    pMotor->command_sequence = 1;
+    motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );    
+
+    pMotor->command_running = true;
+    pMotor->command_error = 0;
+    
+    if(!start_tc) return;
+    
+    // Start the timer
+    if(pMotor == &leftMotorStruct) TC1_CompareStart();
+    else if(pMotor == &rightMotorStruct) TC1_CompareStart();
+    else if(pMotor == &frontMotorStruct) TC1_CompareStart();
+    else if(pMotor == &backMotorStruct) TC1_CompareStart();
+    else if(pMotor == &trapMotorStruct) TC1_CompareStart();
+    else if(pMotor == &mirrorMotorStruct) TC3_CompareStart();
+    else if(pMotor == &filterMotorStruct) TC2_CompareStart();
+    
+    return ;
+}
+
+_MOTOR_COMMAND_RETURN_t activateMotor(unsigned short steps, MOTOR_STRUCT_t* pMotor){
+    
+    if(pMotor->command_running) return MOT_RET_ERR_BUSY;
+    
+    pMotor->target_steps = steps;
+    
+    // Initializes the position procedures
+    activationInitialize(pMotor, true);       
+    return MOT_RET_STARTED;
+}
+
+void abortActivation(void){
+    
+    TC1_CompareStop(); 
+    TC2_CompareStop(); 
+    TC3_CompareStop(); 
+    
+    leftMotorStruct.command_running = false;
+    leftMotorStruct.command_error = 0;
+    leftMotorStruct.command_sequence = 0;
+    
+    rightMotorStruct.command_running = false;
+    rightMotorStruct.command_error = 0;
+    rightMotorStruct.command_sequence = 0;
+    
+    backMotorStruct.command_running = false;
+    backMotorStruct.command_error = 0;
+    backMotorStruct.command_sequence = 0;
+    
+    frontMotorStruct.command_running = false;
+    frontMotorStruct.command_error = 0;
+    frontMotorStruct.command_sequence = 0;
+    
+    trapMotorStruct.command_running = false;
+    trapMotorStruct.command_error = 0;
+    trapMotorStruct.command_sequence = 0;
+   
+    mirrorMotorStruct.command_running = false;
+    mirrorMotorStruct.command_error = 0;
+    mirrorMotorStruct.command_sequence = 0;
+    
+    filterMotorStruct.command_running = false;
+    filterMotorStruct.command_error = 0;
+    filterMotorStruct.command_sequence = 0;
+    
+    // Disables all the motors
+    motorDisable(&leftMotorStruct);
+    motorDisable(&rightMotorStruct);
+    motorDisable(&backMotorStruct);
+    motorDisable(&frontMotorStruct);
+    motorDisable(&trapMotorStruct);
+    motorDisable(&mirrorMotorStruct);
+    motorDisable(&filterMotorStruct);
+    
+}
+
 void motorTestActivation(unsigned char test_case){
     static bool stat = false;
-    MOTOR_STRUCT_t* pMotor = &frontMotorStruct;
+    MOTOR_STRUCT_t* pMotor = &rightMotorStruct;
     
     if(test_case)  motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );
     else{ 
@@ -350,6 +431,6 @@ void motorTestActivation(unsigned char test_case){
 }
 
 void motorLeftTestStop(void){
-    MOTOR_STRUCT_t* pMotor = &frontMotorStruct;
+    MOTOR_STRUCT_t* pMotor = &rightMotorStruct;
     motorDisable(pMotor);
 }

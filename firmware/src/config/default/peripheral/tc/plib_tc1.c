@@ -88,7 +88,7 @@ void TC1_CompareInitialize( void )
     TC1_REGS->COUNT16.TC_WAVE = (uint8_t)TC_WAVE_WAVEGEN_MFRQ;
 
 
-    TC1_REGS->COUNT16.TC_CC[0] = 8U;
+    TC1_REGS->COUNT16.TC_CC[0] = 31U;
 
     /* Clear all interrupt flags */
     TC1_REGS->COUNT16.TC_INTFLAG = (uint8_t)TC_INTFLAG_Msk;
