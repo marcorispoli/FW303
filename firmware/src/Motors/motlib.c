@@ -337,3 +337,19 @@ void motorStep(MOTOR_STRUCT_t* mot, bool stat){
 bool isLatched(MOTOR_STRUCT_t* mot){
     return !motor_latch_request[mot->id];
 }
+
+void motorTestActivation(unsigned char test_case){
+    static bool stat = false;
+    MOTOR_STRUCT_t* pMotor = &frontMotorStruct;
+    
+    if(test_case)  motorOn(pMotor, MOT_TORQUE_HIGH, pMotor->direction_home );
+    else{ 
+        motorStep(pMotor, stat);
+        stat = !stat;
+    }
+}
+
+void motorLeftTestStop(void){
+    MOTOR_STRUCT_t* pMotor = &frontMotorStruct;
+    motorDisable(pMotor);
+}

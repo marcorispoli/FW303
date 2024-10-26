@@ -42,7 +42,7 @@ static void rtcEventHandler (RTC_TIMER32_INT_MASK intCause, uintptr_t context)
     
 }
 
-
+static void manageTestButton(void);
 
 int main ( void )
 {
@@ -81,10 +81,12 @@ int main ( void )
         if(trigger_time & _7820_us_TriggerTime){
             trigger_time &=~ _7820_us_TriggerTime;
             manageMotorLatch();
+            manageTestButton();
         }
 
         if(trigger_time & _15_64_ms_TriggerTime){
             trigger_time &=~ _15_64_ms_TriggerTime;      
+            
  
         }
     }
@@ -94,6 +96,67 @@ int main ( void )
     return ( EXIT_FAILURE );
 }
 
+void manageTestButton(void){
+    unsigned char test_case = 0;
+    static bool activated = false;
+    
+    
+    if(uC_SW1_Get()) test_case|=0x4;
+    if(uC_SW2_Get()) test_case|=0x2;
+    if(uC_SW3_Get()) test_case|=0x1;
+    
+    if(uC_TEST_PUSH_Get() == activated){ 
+        if(!activated) return;
+        
+        switch(test_case){
+        case 0:
+            motorTestActivation(0);           
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+        }
+        
+        return;
+    }
+    
+    activated = uC_TEST_PUSH_Get();
+    
+    
+
+    switch(test_case){
+        case 0:
+            if(activated) motorTestActivation(1) ;
+            else motorLeftTestStop();
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+    }
+    
+}
 /** @}*/
 /*******************************************************************************
  End of File

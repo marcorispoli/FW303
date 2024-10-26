@@ -216,5 +216,6 @@
         ext void motorStep(MOTOR_STRUCT_t* mot, bool stat);        
         ext bool optoGet(MOTOR_STRUCT_t* mot);
         
-        
+        ext void motorTestActivation(unsigned char test_case);
+        ext void motorLeftTestStop(void);
 #endif // _MOTLIB_H

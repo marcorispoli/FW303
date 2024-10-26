@@ -329,14 +329,14 @@
 #define uC_OPTO_BACK_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 17U)) & 0x01U)
 #define uC_OPTO_BACK_PIN                  PORT_PIN_PB17
 
-/*** Macros for uC_TEST_PUSH_4 pin ***/
-#define uC_TEST_PUSH_4_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 20U))
-#define uC_TEST_PUSH_4_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 20U))
-#define uC_TEST_PUSH_4_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 20U))
-#define uC_TEST_PUSH_4_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 20U))
-#define uC_TEST_PUSH_4_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 20U))
-#define uC_TEST_PUSH_4_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 20U)) & 0x01U)
-#define uC_TEST_PUSH_4_PIN                  PORT_PIN_PA20
+/*** Macros for uC_SW1 pin ***/
+#define uC_SW1_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 20U))
+#define uC_SW1_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 20U))
+#define uC_SW1_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 20U))
+#define uC_SW1_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 20U))
+#define uC_SW1_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 20U))
+#define uC_SW1_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 20U)) & 0x01U)
+#define uC_SW1_PIN                  PORT_PIN_PA20
 
 /*** Macros for uC_XRAY_ON pin ***/
 #define uC_XRAY_ON_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 21U))
@@ -355,23 +355,23 @@
 #define CAN0_RX_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 23U)) & 0x01U)
 #define CAN0_RX_PIN                  PORT_PIN_PA23
 
-/*** Macros for uC_TEST_PUSH_2 pin ***/
-#define uC_TEST_PUSH_2_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 24U))
-#define uC_TEST_PUSH_2_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 24U))
-#define uC_TEST_PUSH_2_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 24U))
-#define uC_TEST_PUSH_2_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 24U))
-#define uC_TEST_PUSH_2_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 24U))
-#define uC_TEST_PUSH_2_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 24U)) & 0x01U)
-#define uC_TEST_PUSH_2_PIN                  PORT_PIN_PA24
+/*** Macros for uC_SW2 pin ***/
+#define uC_SW2_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 24U))
+#define uC_SW2_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 24U))
+#define uC_SW2_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 24U))
+#define uC_SW2_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 24U))
+#define uC_SW2_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 24U))
+#define uC_SW2_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 24U)) & 0x01U)
+#define uC_SW2_PIN                  PORT_PIN_PA24
 
-/*** Macros for uC_TEST_PUSH_3 pin ***/
-#define uC_TEST_PUSH_3_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 25U))
-#define uC_TEST_PUSH_3_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 25U))
-#define uC_TEST_PUSH_3_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 25U))
-#define uC_TEST_PUSH_3_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 25U))
-#define uC_TEST_PUSH_3_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 25U))
-#define uC_TEST_PUSH_3_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 25U)) & 0x01U)
-#define uC_TEST_PUSH_3_PIN                  PORT_PIN_PA25
+/*** Macros for uC_SW3 pin ***/
+#define uC_SW3_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 25U))
+#define uC_SW3_Clear()             (PORT_REGS->GROUP[0].PORT_OUTCLR = ((uint32_t)1U << 25U))
+#define uC_SW3_Toggle()            (PORT_REGS->GROUP[0].PORT_OUTTGL = ((uint32_t)1U << 25U))
+#define uC_SW3_OutputEnable()      (PORT_REGS->GROUP[0].PORT_DIRSET = ((uint32_t)1U << 25U))
+#define uC_SW3_InputEnable()       (PORT_REGS->GROUP[0].PORT_DIRCLR = ((uint32_t)1U << 25U))
+#define uC_SW3_Get()               (((PORT_REGS->GROUP[0].PORT_IN >> 25U)) & 0x01U)
+#define uC_SW3_PIN                  PORT_PIN_PA25
 
 /*** Macros for uC_OPTO_MIRROR pin ***/
 #define uC_OPTO_MIRROR_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 22U))
@@ -382,14 +382,14 @@
 #define uC_OPTO_MIRROR_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 22U)) & 0x01U)
 #define uC_OPTO_MIRROR_PIN                  PORT_PIN_PB22
 
-/*** Macros for uC_TEST_PUSH_1 pin ***/
-#define uC_TEST_PUSH_1_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 23U))
-#define uC_TEST_PUSH_1_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 23U))
-#define uC_TEST_PUSH_1_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 23U))
-#define uC_TEST_PUSH_1_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 23U))
-#define uC_TEST_PUSH_1_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 23U))
-#define uC_TEST_PUSH_1_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 23U)) & 0x01U)
-#define uC_TEST_PUSH_1_PIN                  PORT_PIN_PB23
+/*** Macros for uC_TEST_PUSH pin ***/
+#define uC_TEST_PUSH_Set()               (PORT_REGS->GROUP[1].PORT_OUTSET = ((uint32_t)1U << 23U))
+#define uC_TEST_PUSH_Clear()             (PORT_REGS->GROUP[1].PORT_OUTCLR = ((uint32_t)1U << 23U))
+#define uC_TEST_PUSH_Toggle()            (PORT_REGS->GROUP[1].PORT_OUTTGL = ((uint32_t)1U << 23U))
+#define uC_TEST_PUSH_OutputEnable()      (PORT_REGS->GROUP[1].PORT_DIRSET = ((uint32_t)1U << 23U))
+#define uC_TEST_PUSH_InputEnable()       (PORT_REGS->GROUP[1].PORT_DIRCLR = ((uint32_t)1U << 23U))
+#define uC_TEST_PUSH_Get()               (((PORT_REGS->GROUP[1].PORT_IN >> 23U)) & 0x01U)
+#define uC_TEST_PUSH_PIN                  PORT_PIN_PB23
 
 /*** Macros for FAN pin ***/
 #define FAN_Set()               (PORT_REGS->GROUP[0].PORT_OUTSET = ((uint32_t)1U << 27U))

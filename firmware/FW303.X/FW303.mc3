@@ -11119,7 +11119,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;PIN_41_FUNCTION_NAME&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_TEST_PUSH_4&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_SW1&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11394,7 +11394,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;PIN_45_FUNCTION_NAME&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_TEST_PUSH_2&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_SW2&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11482,7 +11482,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;PIN_46_FUNCTION_NAME&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_TEST_PUSH_3&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_SW3&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11724,7 +11724,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;PIN_50_FUNCTION_NAME&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_TEST_PUSH_1&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;uC_TEST_PUSH&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -20108,7 +20108,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\port\plib_port.h</file>
-         <hash>40ed4800912dcf25b48a54dee9d955121766b7ca6964dd6b9e061fef3996312e</hash>
+         <hash>7e7a2d7a7baa41c6c6c4f4c8a337879354e5f098e85a7e710d450d4b3b844415</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\rtc\plib_rtc.h</file>

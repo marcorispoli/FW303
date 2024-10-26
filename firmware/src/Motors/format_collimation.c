@@ -64,8 +64,8 @@ void formatInit(void){
     // Sets the Motor performances
     leftMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
     leftMotorStruct.init_period = leftMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_LR_ms_TIME);
-    leftMotorStruct.direction_home = MOT_DIRCCW;
-    leftMotorStruct.direction_field = MOT_DIRCW;
+    leftMotorStruct.direction_home = MOT_DIRCW;
+    leftMotorStruct.direction_field = MOT_DIRCCW;
     leftMotorStruct.stepping_mode = LR_STEPPING_MODE;
     leftMotorStruct.command_running = false;
     leftMotorStruct.command_running = false;
@@ -74,8 +74,8 @@ void formatInit(void){
        
     rightMotorStruct.run_period = STEPs_TO_PERIOD(SPEED_LR_STEP_PER_SEC, LR_STEPPING_MODE);
     rightMotorStruct.init_period = rightMotorStruct.run_period + TIME_ms_TO_RAMP(RAMP_LR_ms_TIME);
-    rightMotorStruct.direction_home = MOT_DIRCCW;
-    rightMotorStruct.direction_field = MOT_DIRCW;
+    rightMotorStruct.direction_home = MOT_DIRCW;
+    rightMotorStruct.direction_field = MOT_DIRCCW;
     rightMotorStruct.stepping_mode = LR_STEPPING_MODE;
     rightMotorStruct.command_running = false;
     rightMotorStruct.command_error = 0;
