@@ -60,7 +60,7 @@ int main ( void )
     formatInit();
     filterInit();
     mirrorInit();
-  
+    FAN_Clear();
     
     while ( true )
     {
@@ -74,7 +74,7 @@ int main ( void )
             trigger_time &=~ _1024_ms_TriggerTime;            
             light1sLoop();            
             VITALITY_LED_Toggle();
-                        
+            
         }        
  
         // Timer events activated into the RTC interrupt
