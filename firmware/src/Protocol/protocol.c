@@ -83,7 +83,7 @@ void ApplicationProtocolCommandHandler(uint8_t cmd, uint8_t d0,uint8_t d1,uint8_
             
          case CMD_SET_FILTER:
             
-            switch(activateFilter(d0)){
+            switch(activateFilter(d0,false)){
                 case MOT_RET_IN_TARGET:
                     MET_Can_Protocol_returnCommandExecuted(d0,0);
                     break;
@@ -151,7 +151,7 @@ bool protocolGet2DFormat(int slot, unsigned short* left, unsigned short* right, 
 }
 
 bool protocolGetFilter(int slot, unsigned short* flt){
-    if(slot >= 3) return false;
+    if(slot >= 5) return false;
     
     decodeParamRegister(&FilterParamRegisterArray[slot/2]);
     if(slot%2) *flt = (unsigned short) FilterParamRegisterArray[slot/2].F1L + 256 * (unsigned short) FilterParamRegisterArray[slot/2].F1H;
