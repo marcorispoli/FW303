@@ -377,7 +377,7 @@ _MOTOR_COMMAND_RETURN_t activateMotor(unsigned short steps, MOTOR_STRUCT_t* pMot
 void abortActivation(void){
     
     TC1_CompareStop(); 
-    TC2_CompareStop(); 
+    
     TC3_CompareStop(); 
     
     leftMotorStruct.command_running = false;
@@ -404,9 +404,6 @@ void abortActivation(void){
     mirrorMotorStruct.command_error = 0;
     mirrorMotorStruct.command_sequence = 0;
     
-    filterMotorStruct.command_running = false;
-    filterMotorStruct.command_error = 0;
-    filterMotorStruct.command_sequence = 0;
     
     // Disables all the motors
     motorDisable(&leftMotorStruct);
@@ -415,7 +412,7 @@ void abortActivation(void){
     motorDisable(&frontMotorStruct);
     motorDisable(&trapMotorStruct);
     motorDisable(&mirrorMotorStruct);
-    motorDisable(&filterMotorStruct);
+    
     
 }
 

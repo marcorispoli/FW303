@@ -24,8 +24,10 @@
 static bool command_activated = false;
 static int  current_index = -1;
 static int  target_index = -1;
+static int  min_slot = 0;
+static int  max_slot = 0;
 
-
+static volatile int  blades = 0;
 static void filterCallback(TC_COMPARE_STATUS status, uintptr_t context); //!< Timer Callback for the format collimation
 static void filterPositioning(MOTOR_STRUCT_t* pMotor);
 
@@ -70,10 +72,10 @@ void filterInit(void){
 }
 
 
-_MOTOR_COMMAND_RETURN_t activateFilter(int index){
+_MOTOR_COMMAND_RETURN_t activateFilter(int index, bool force){
     
     // The current index is equal to the requested index
-    if(current_index == index) return MOT_RET_IN_TARGET;
+    if((!force)&&(current_index == index)) return MOT_RET_IN_TARGET;
     
     // A command is executing
     if(command_activated) return MOT_RET_ERR_BUSY;    
@@ -88,6 +90,31 @@ _MOTOR_COMMAND_RETURN_t activateFilter(int index){
     current_index = -1;
     target_index = index;
     
+    // Assignes the slot steps
+    switch(target_index){
+        case 0:
+            min_slot = SLOT0_MIN_STEP;
+            max_slot = SLOT0_MAX_STEP;
+            break;
+        case 1:
+            min_slot = SLOT1_MIN_STEP;
+            max_slot = SLOT1_MAX_STEP;
+            break;
+        case 2:
+            min_slot = SLOT2_MIN_STEP;
+            max_slot = SLOT2_MAX_STEP;
+            break;
+        case 3:
+            min_slot = SLOT3_MIN_STEP;
+            max_slot = SLOT3_MAX_STEP;
+            break;
+        case 4:
+            min_slot = SLOT4_MIN_STEP;
+            max_slot = SLOT4_MAX_STEP;
+            break;
+            
+    }
+           
     // Updates the Status register
     SystemStatusRegister.format_filter_activity = FORMAT_EXECUTING;
     SystemStatusRegister.format_filter_index = target_index;
@@ -165,46 +192,68 @@ void filterPositioning(MOTOR_STRUCT_t* pMotor){
     }
    
    switch(pMotor->command_sequence){
-       
-       case 1: // PHotocell not yet intercepted
-            if(!isLatched(pMotor)) return ;
-
-            // Photocell trigger
-            if(optoGet(pMotor)){                
-                pMotor->command_sequence++;
+       case 1: 
+           if(!isLatched(pMotor)) return ;
+            
+           // The procedure shall start from a point where the photocell is not triggered
+           if(optoGet(pMotor)){  
+                // Continue to step until the photocell is released
+                motorStep(pMotor, true);
+                return ;
+           }
+           
+           // Now the photocell has been released
+           pMotor->command_sequence++;
+           return;
+           
+       case 2: // Find the first occurrence of a new blade            
+            
+            if(!optoGet(pMotor)){                
+                motorStep(pMotor, true);            
                 return ;
             }
-           
-            // Steps
-            motorStep(pMotor, true);
-           
-            // Handling a timeout here  
-            return ;
-           
-       case 2: // Continue until photocell is released           
-            pMotor->steps = 0; // Reset the steps to be counted for the target            
+            
+            // Photocell trigger: counts the length of the blade
+            pMotor->steps = 0;
             pMotor->command_sequence++;
             return ;
        
        case 3: // Waits to exit from the photocell
-            if(!isLatched(pMotor)) return ;
-            
-            if(!optoGet(pMotor)){
-                pMotor->command_sequence++;
-                pMotor->steps = 0;
+            if(optoGet(pMotor)){
+                motorStep(pMotor, true);
                 return ;
             }
             
-            // Steps
-            motorStep(pMotor, true);
+            // The photocell has been released: check what is the current blade dimension            
+            blades = pMotor->steps;
+            pMotor->steps = 0;
             
-            // Handle a timeout here
+            // Target reached
+            if((blades >= min_slot) && (blades <= max_slot)){                
+                pMotor->command_sequence = 5;
+                return;
+            }
             
+            // Continue to find another blade: before executes extra steps to 
+            // be sure that the photocell remains free
+            pMotor->command_sequence++;
             return ;
+       
+       // Executes an extra steps sequence before to restart the new research
+       case 4:
+           if(pMotor->steps>10){
+               // Restarts a new find sequence for the next blade
+               pMotor->command_sequence = 2;
+               return ;
+           }
+           
+           // Extra Steps executing
+           motorStep(pMotor, true);
+           return;
+           
+       case 5: // Blade found!
             
-       case 4: // Steps to the requested target
-            
-            // Command successfully completed
+            // Command successfully completed: goes to the keeping time
             if(pMotor->steps >= pMotor->target_steps){
                 pMotor->command_sequence++;
                 return ;
@@ -212,12 +261,13 @@ void filterPositioning(MOTOR_STRUCT_t* pMotor){
             
             // Steps
             motorStep(pMotor, true);
-            
-            
-           // Handles a timeout here
-
+            // Handles a timeout here
             return ;
+       
+       
+           
        default:
+           // Keeping time to dissipate the rotation inertia
            pMotor->command_sequence++;
            
            // Keeps the torque to dissipate the rotating energy inertia
@@ -237,4 +287,26 @@ void filterPositioning(MOTOR_STRUCT_t* pMotor){
     pMotor->command_sequence = 0;
     return ;
    
+}
+
+void abortFilter(void){
+    if(!filterMotorStruct.command_running) return;
+    
+    TC2_CompareStop();         
+    motorDisable(&filterMotorStruct);
+    filterMotorStruct.command_running = false;
+    filterMotorStruct.command_error = 1;
+    filterMotorStruct.command_sequence = 0;
+   
+    current_index = -1;
+    target_index = -1;
+    command_activated = false;
+    
+    // Updates the Status register
+    SystemStatusRegister.format_filter_activity = FORMAT_UNDEFINED;
+    SystemStatusRegister.format_filter_index = 0;
+    encodeStatusRegister(&SystemStatusRegister);
+
+    MET_Can_Protocol_returnCommandError(ERROR_IN_FILTER_POSITIONING);
+    
 }

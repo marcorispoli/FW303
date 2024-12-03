@@ -139,10 +139,13 @@ void manageTestButton(void){
     }
     
     if(test_case & 0x4){
-        steps = 0;
         if(activated){
-            activateMotor(steps, &filterMotorStruct);
-        }else abortActivation();       
+            activateFilter(0, true);
+            //if(SystemStatusRegister.format_filter_activity == FORMAT_SELECTED){
+            //    activateFilter((SystemStatusRegister.format_filter_index+1)%5);
+            //}else activateFilter(0);
+        }else abortFilter();      
+        
     }
 
     
