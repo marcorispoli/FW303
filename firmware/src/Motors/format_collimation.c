@@ -33,6 +33,9 @@
 #define INIT_SPEED_TRAP_STEP_PER_SEC 50
 #define TRAP_RAMP_RATE 10
 
+#define MAX_LR_STEPS_SUM 10000 // The maximum sum from the positions to prevent left and right contact
+#define MAX_LR_STEPS 8000     // The maximum position for both left and right
+
 static bool command_activated = false;
 static int  current_index = -1;
 static int  target_index = -1;
@@ -139,6 +142,14 @@ _MOTOR_COMMAND_RETURN_t activateFormatCollimation(int index){
     
     // Upload the target position to the motors
     if(!protocolGet2DFormat(index, &leftMotorStruct.target_steps, &rightMotorStruct.target_steps, &frontMotorStruct.target_steps, &backMotorStruct.target_steps, &trapMotorStruct.target_steps)) return MOT_RET_ERR_INVALID_TARGET;
+    
+    // Verify the target validity
+    if(leftMotorStruct.target_steps > MAX_LR_STEPS) leftMotorStruct.target_steps = MAX_LR_STEPS;
+    if(rightMotorStruct.target_steps > MAX_LR_STEPS) rightMotorStruct.target_steps = MAX_LR_STEPS;
+    if((leftMotorStruct.target_steps + rightMotorStruct.target_steps) > MAX_LR_STEPS_SUM){
+        leftMotorStruct.target_steps -= (leftMotorStruct.target_steps + rightMotorStruct.target_steps - MAX_LR_STEPS_SUM)/2;
+        rightMotorStruct.target_steps -= (leftMotorStruct.target_steps + rightMotorStruct.target_steps - MAX_LR_STEPS_SUM)/2;  
+    }
     
     // Init command flag
     command_activated = true;

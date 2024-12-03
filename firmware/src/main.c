@@ -110,6 +110,12 @@ void manageTestButton(void){
     
     activated = uC_TEST_PUSH_Get();
     
+     if(activated){
+            activateMotor(5000, &rightMotorStruct);     
+            activateMotor(5000, &leftMotorStruct);
+    }else abortActivation();
+    return;
+    
     if(test_case == 0){
         if(activated){
             activateMotor(0, &rightMotorStruct);
