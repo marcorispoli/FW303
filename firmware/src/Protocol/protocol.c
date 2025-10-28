@@ -122,6 +122,13 @@ void ApplicationProtocolCommandHandler(uint8_t cmd, uint8_t d0,uint8_t d1,uint8_
             else lightActivation(false);
             MET_Can_Protocol_returnCommandExecuted(d0,0);
             break;
+        
+        case CMD_SET_FAN:
+            if(d0) SystemStatusRegister.fan_forced = 1;
+            else SystemStatusRegister.fan_forced = 0;
+            encodeStatusRegister(&SystemStatusRegister);
+            MET_Can_Protocol_returnCommandExecuted(d0,0);
+            break;
             
         default:
             MET_Can_Protocol_returnCommandError(MET_CAN_COMMAND_NOT_AVAILABLE);

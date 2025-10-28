@@ -196,8 +196,11 @@ typedef enum{
         unsigned char format_mirror_activity:3; //!< This is the current Mirror activity \ref FORMAT_ACTIVITY_t
         unsigned char in_field_position:1;      //!< Set if the Mirror is In-FIELD or cleared if the Mirror is Out Field
         unsigned char collimation_light:1;      //!< Set if the collimation light is ON
+        unsigned char d2_spare:3;
         
-        unsigned char d3; 
+        unsigned char fan_stat:1;               //!< Set if the fan is activated
+        unsigned char fan_forced:1;             //!< Set if the fan has been forced by external command        
+        unsigned char d3_spare:6; 
     }SYSTEM_STATUS_t;
 
     
@@ -490,6 +493,7 @@ typedef enum{
    CMD_SET_FILTER = 2, //!< MAIN-CPU requests for filter selection
    CMD_SET_MIRROR = 3, //!< MAIN-CPU requests for Mirror activation
    CMD_SET_LIGHT = 4,  //!< MAIN-CPU requests for Light activation
+   CMD_SET_FAN = 5,    //!< MAIN-CPU requests for Fan Force action
 }PROTOCOL_COMMANDS_t;
 
 /// \ingroup CANPROT
