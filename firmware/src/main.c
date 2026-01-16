@@ -10,6 +10,7 @@
 #include "Motors/format_collimation.h"
 #include "Motors/filter.h"
 #include "Motors/mirror.h"
+#include "XrayTube/xray_tube.h"
 
  /** 
      * \defgroup appMainModule  Main Module 
@@ -60,7 +61,8 @@ int main ( void )
     formatInit();
     filterInit();
     mirrorInit();
-    FAN_Clear();
+    XrayTubeInit();
+    
     
     while ( true )
     {
@@ -86,7 +88,7 @@ int main ( void )
 
         if(trigger_time & _15_64_ms_TriggerTime){
             trigger_time &=~ _15_64_ms_TriggerTime;      
-            
+            XrayTubeLoop();
  
         }
     }

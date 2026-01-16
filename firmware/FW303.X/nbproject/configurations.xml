@@ -7,6 +7,10 @@
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
           <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+            <logicalFolder name="adc" displayName="adc" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/adc/plib_adc0.h</itemPath>
+              <itemPath>../src/config/default/peripheral/adc/plib_adc_common.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="can" displayName="can" projectFiles="true">
               <itemPath>../src/config/default/peripheral/can/plib_can0.h</itemPath>
               <itemPath>../src/config/default/peripheral/can/plib_can_common.h</itemPath>
@@ -203,6 +207,9 @@
       <logicalFolder name="config" displayName="config" projectFiles="true">
         <logicalFolder name="default" displayName="default" projectFiles="true">
           <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+            <logicalFolder name="adc" displayName="adc" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/adc/plib_adc0.c</itemPath>
+            </logicalFolder>
             <logicalFolder name="can" displayName="can" projectFiles="true">
               <itemPath>../src/config/default/peripheral/can/plib_can0.c</itemPath>
             </logicalFolder>
@@ -253,6 +260,10 @@
         <itemPath>../src/Motors/filter.h</itemPath>
         <itemPath>../src/Motors/mirror.c</itemPath>
         <itemPath>../src/Motors/mirror.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="XrayTube" displayName="XrayTube" projectFiles="true">
+        <itemPath>../src/XrayTube/xray_tube.c</itemPath>
+        <itemPath>../src/XrayTube/xray_tube.h</itemPath>
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/application.h</itemPath>
