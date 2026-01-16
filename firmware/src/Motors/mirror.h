@@ -24,7 +24,9 @@
     ext void mirrorInit(void); //!< Module initialization function
     ext _MOTOR_COMMAND_RETURN_t activateMirror(int index);//!< Mirror activation command to index 
     ext void lightActivation(bool status);
+    ext void timeLightActivation(bool status, int timer);
     ext void light1sLoop(void);
+    ext bool isLightOn(void);
 
 
 #endif // _MOT_MIRROR_H

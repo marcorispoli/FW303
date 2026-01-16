@@ -295,3 +295,28 @@ void lightActivation(bool status){
     encodeStatusRegister(&SystemStatusRegister);
     return;        
 }
+
+void timeLightActivation(bool status, int timer){
+    
+    if(status){
+        lightStruct.timer = timer;
+        uC_LED_ON_Set();
+        uC_TEST_LED_Set();
+        lightStruct.status = true;
+        SystemStatusRegister.collimation_light = 1;
+        encodeStatusRegister(&SystemStatusRegister);
+        return;        
+    }
+    
+    lightStruct.status = false;
+    uC_LED_ON_Clear();
+    uC_TEST_LED_Clear();
+    lightStruct.timer = 0;
+    SystemStatusRegister.collimation_light = 0;
+    encodeStatusRegister(&SystemStatusRegister);
+    return;        
+}
+
+bool isLightOn(void){
+    return lightStruct.status;
+}

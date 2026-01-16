@@ -99,6 +99,8 @@ int main ( void )
 void manageTestButton(void){
     unsigned char test_case = 0;
     static bool activated = false;
+    static bool toggle_light = false;
+    
     int steps;
     
     
@@ -110,11 +112,23 @@ void manageTestButton(void){
     
     activated = uC_TEST_PUSH_Get();
     
-     if(activated){
-            activateMotor(5000, &rightMotorStruct);     
-            activateMotor(5000, &leftMotorStruct);
-    }else abortActivation();
+    if(activated){ 
+     //   toggle_light = !toggle_light;
+        if(isLightOn()){
+            lightActivation(false);
+        }else{
+            timeLightActivation(true, 360);
+        }
+    }
     return;
+    
+    if(toggle_light){
+        timeLightActivation(true, 20);
+    }else{
+        lightActivation(false);
+    }
+    return;
+    
     
     if(test_case == 0){
         if(activated){
