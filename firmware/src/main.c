@@ -99,6 +99,8 @@ int main ( void )
 }
 
 void manageTestButton(void){
+     return;
+     
     unsigned char test_case = 0;
     static bool activated = false;
     static bool toggle_light = false;
@@ -122,7 +124,7 @@ void manageTestButton(void){
             timeLightActivation(true, 360);
         }
     }
-    return;
+   
     
     if(toggle_light){
         timeLightActivation(true, 20);
